@@ -3,9 +3,7 @@
 
 ## A tool to apply basic skins to FL Studio 12+ ***without piracy or dll replacements***.
 
-### Download
-
-[Latest release](https://github.com/liquiad/flskinner/releases/latest/download/flskinner_x64_release.zip)
+## Download the [latest release](https://github.com/liquiad/flskinner/releases/latest/download/flskinner_x64_release.zip)
 
 ### What versions does this support?
 

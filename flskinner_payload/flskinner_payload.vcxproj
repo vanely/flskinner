@@ -82,8 +82,8 @@
     <LibraryPath>C:\Users\Seth\Documents\minhook-master\build\VC15\lib\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\Seth\Documents\minhook-master\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>C:\Users\Seth\Documents\minhook-master\build\VC15\lib\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)minhook\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>$(SolutionDir)lib\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

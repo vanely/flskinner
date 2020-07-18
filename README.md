@@ -45,7 +45,7 @@ Quick rundown:
 * If it cannot find FL studio, it will prompt you to select the FL studio folder. Pick the folder that contains **FL64.exe**.
 * Just select the skin and press **Launch FL Studio**.
 * You ***MUST*** launch FL studio using the tool, or else it will not apply the skin. **This does not modify your FL studio files in any way.**
-* Feel free to join our [Discord](https://discord.gg/4N3EZqa) for help.
+* Feel free to join our [Discord](https://discord.gg/QtVBJMe) for help.
 
 
 *The configuration files are located in `%AppData%/flskinner`.
@@ -63,4 +63,4 @@ Feel free to make your own skins, they are simply JSON files with color replacem
 
 This was just a fun little project. This isn't intended to be some super serious tool. Image-Line has already said that there will be user-customization in a 20.x update.
 
-[Discord](https://discord.gg/4N3EZqa)
+[Discord](https://discord.gg/QtVBJMe)

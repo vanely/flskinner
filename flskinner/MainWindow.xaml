@@ -22,8 +22,8 @@
 
         <Button x:Name="LaunchFL" Content="Launch FL Studio" Margin="10,0,10,10" Height="28" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Click="LaunchFL_Click"/>
         <Button x:Name="OpenSkinsFolder" Content="Open skins folder" Margin="10,0,10,43" Height="28" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Click="OpenSkinsFolder_Click"/>
-        <Label x:Name="SkinsLabel" Content="Skins" HorizontalAlignment="Left" Margin="16,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.281,0.319" FontFamily="Roboto" FontWeight="Bold"/>
-        <ListBox x:Name="SkinsList" HorizontalAlignment="Left" Margin="10,39,0,76" Width="772" Grid.ColumnSpan="2" SelectionChanged="SkinsList_SelectionChanged">
+        <Label x:Name="SkinsLabel" Content="Skins" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.281,0.319" FontFamily="Roboto" FontWeight="Bold"/>
+        <ListBox x:Name="SkinsList" HorizontalAlignment="Left" Margin="10,49,0,179" Width="772" Grid.ColumnSpan="2" SelectionChanged="SkinsList_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
@@ -39,6 +39,10 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        <Label Content="FL Studio Path:" Margin="10,259,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.322,-0.499" FontWeight="Bold" HorizontalAlignment="Left" Width="106" FontSize="14"/>
+        <Label x:Name="flStudioPath" Content="" Margin="116,259,9,0" VerticalAlignment="Top" RenderTransformOrigin="-3.322,-0.499" Grid.ColumnSpan="2" FontSize="14"/>
+        <Button x:Name="OpenConfigFolder" Content="Open config Folder" Margin="10,0,10,76" Height="28" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Click="OpenConfigFolder_Click"/>
+        <Button x:Name="ChangeFLFolder_Copy" Content="Change FL Studio Path" Margin="10,0,10,109" Height="28" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Click="ChangeFLFolder_Click"/>
 
     </Grid>
 </Window>

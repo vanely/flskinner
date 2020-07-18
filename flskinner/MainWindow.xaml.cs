@@ -30,6 +30,8 @@ namespace flskinner
 
             Bootstrap.Setup();
 
+            flStudioPath.Content = Config.current.flStudioPath;
+
             int selectedIndex = -1;
 
             SkinsList.ItemsSource = Skin.skins;
@@ -53,6 +55,19 @@ namespace flskinner
                 Config.current.currentSkin = ((Skin)e.AddedItems[0]).fileName;
                 Config.current.Save();
             }
+        }
+
+        private void ChangeFLFolder_Click(object sender, RoutedEventArgs e)
+        {
+            Bootstrap.PickFLFolder();
+            flStudioPath.Content = Config.current.flStudioPath;
+        }
+
+        private void OpenConfigFolder_Click(object sender, RoutedEventArgs e)
+        {
+            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var folderPath = string.Format(@"{0}\flskinner\", appDataPath);
+            Process.Start("explorer.exe", folderPath);
         }
     }
 }

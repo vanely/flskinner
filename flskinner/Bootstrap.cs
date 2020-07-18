@@ -84,31 +84,7 @@ namespace flskinner
 
             if (!File.Exists(string.Format(@"{0}\FL64.exe", Config.current.flStudioPath)))
             {
-                CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-                dialog.InitialDirectory = "C:\\";
-                dialog.IsFolderPicker = true;
-                dialog.Title = "Please select your FL studio folder (contains FL64.exe)";
-
-                var res = dialog.ShowDialog();
-                if (res == CommonFileDialogResult.Ok)
-                {
-                    var path = dialog.FileName + @"\FL64.exe";
-                    if (File.Exists(path))
-                    {
-                        Config.current.flStudioPath = dialog.FileName;
-                        Config.current.Save();
-                    } else
-                    {
-                        MessageBox.Show("That folder does not contain FL studio!");
-
-                        Setup();
-                        return;
-                    }
-                } 
-                else if (res == CommonFileDialogResult.Cancel)
-                {
-                    System.Environment.Exit(1);
-                }
+                PickFLFolder();
             }
 
             Skin.skins = new List<Skin>();
@@ -130,6 +106,36 @@ namespace flskinner
                     MessageBox.Show(sb.ToString());
                     System.Environment.Exit(1);
                 }
+            }
+        }
+
+        public static void PickFLFolder()
+        {
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.InitialDirectory = "C:\\";
+            dialog.IsFolderPicker = true;
+            dialog.Title = "Please select your FL studio folder (contains FL64.exe)";
+
+            var res = dialog.ShowDialog();
+            if (res == CommonFileDialogResult.Ok)
+            {
+                var path = dialog.FileName + @"\FL64.exe";
+                if (File.Exists(path))
+                {
+                    Config.current.flStudioPath = dialog.FileName;
+                    Config.current.Save();
+                }
+                else
+                {
+                    MessageBox.Show("That folder does not contain FL studio!");
+
+                    PickFLFolder();
+                    return;
+                }
+            }
+            else if (res == CommonFileDialogResult.Cancel)
+            {
+                System.Environment.Exit(1);
             }
         }
     }

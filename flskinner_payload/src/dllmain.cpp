@@ -180,7 +180,7 @@ vec_byte_t process_resource( void* memory, size_t size ) {
 	auto obj = dfm::parse( raw_buffer );
 
 	do_color_replacements( obj );
-	do_button_color_replacements( obj );
+	if ( replace_buttons ) do_button_color_replacements( obj );
 
 	return obj.get_full_binary().raw();
 }

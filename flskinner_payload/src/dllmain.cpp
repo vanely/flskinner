@@ -33,7 +33,7 @@ fn_SizeofResource_t orig_SizeofResource;
 using fn_get_color_t = uint64_t( * )( uint32_t );
 fn_get_color_t orig_get_mixer_color;
 
-using fn_unk_set_color_t = uint64_t( * )( uint64_t, uint64_t, uint64_t );
+using fn_unk_set_color_t = uint64_t( * )( uint64_t, uint64_t, uint64_t, uint64_t );
 fn_unk_set_color_t orig_unk_set_color;
 
 std::wstring skin_path;
@@ -51,7 +51,6 @@ struct resource_t {
 std::vector<resource_t> resources;
 
 bool resources_loaded = false;
-bool hack_mixer_tracks = false;
 
 BOOL CALLBACK EnumResNameProc(
   _In_opt_ HMODULE  hModule,
@@ -85,7 +84,6 @@ void load_resources() {
 struct col_replacement_t {
 	uint32_t a, b;
 };
-
 std::vector<col_replacement_t> dfm_replacements = {
 	//{ 0x676259, 0x272727 },
 	//{ 0x6d685f, 0x272727 },
@@ -111,7 +109,44 @@ std::vector<col_replacement_t> hook_replacements = {
 	//{ 0x716C63, 0x292929 }
 };
 
-uint32_t mixer_color;// = 0x202020;
+bool replace_mixer_tracks = false,
+	 replace_buttons = false;
+
+uint32_t mixer_color = 0,
+		 button_colors = 0;
+
+void do_button_color_replacements( dfm::object& obj ) {
+	for ( auto& c : obj.get_children() ) {
+		if ( c.get_children().size() > 0 ) {
+			do_button_color_replacements( c );
+		}
+
+		if ( !c.is_object() ) continue;
+
+		if ( c.get_name_parent() == "TQuickBtn" ) {
+			if ( c.get_name() == "StartBtn"
+				 || c.get_name() == "StopBtn" 
+				 || c.get_name() == "RecBtn" ) {
+				for ( auto& c2 : c.get_children() ) {
+					if ( c2.get_name() == "Color" ) {
+						c2.get_val().m_num_val = button_colors;
+					}
+				}
+			} else if ( c.get_name() != "PatBtn"){
+				dfm::val v;
+				v.m_type = dfm::type_t::int32;
+				v.m_num_val = button_colors;
+
+				dfm::object o;
+				o.setup( "ExtraColor", v );
+
+				c.add_child( o );
+			}
+
+			//printf( "%s => (%s: %s)\n", obj.get_name().c_str(), c.get_name().c_str(), c.get_name_parent().c_str() );
+		}
+	}
+}
 
 void do_color_replacements( dfm::object& obj ) {
 	for ( auto& c : obj.get_children() ) {
@@ -121,6 +156,9 @@ void do_color_replacements( dfm::object& obj ) {
 
 		if ( c.get_val().m_type != dfm::type_t::int32 ) continue;
 		if ( c.get_name().find( "Color" ) == std::string::npos ) continue;
+
+		// we will replace font colors elsewhere
+		if ( c.get_name().find( "Font.Color" ) != std::string::npos ) continue;
 
 		for ( auto& replacement : dfm_replacements ) {
 			if ( ( c.get_val().m_num_val & 0xFFFFFF ) == ( replacement.a & 0xFFFFFF ) ) {
@@ -142,6 +180,7 @@ vec_byte_t process_resource( void* memory, size_t size ) {
 	auto obj = dfm::parse( raw_buffer );
 
 	do_color_replacements( obj );
+	do_button_color_replacements( obj );
 
 	return obj.get_full_binary().raw();
 }
@@ -156,7 +195,7 @@ uint64_t hk_get_mixer_color( uint32_t a1 ) {
 
 // i think this is used for when different panels' colors are set in FL
 // it also might have more args :shrug:
-uint64_t hk_unk_set_color( uint64_t a, uint64_t b, uint64_t col ) {
+uint64_t hk_unk_set_color( uint64_t a, uint64_t b, uint64_t col, uint64_t d ) {
 	for ( auto& replacement : hook_replacements ) {
 		if ( ( col & 0xFFFFFF ) == ( replacement.a & 0xFFFFFF ) ) {
 			col = replacement.b | ( replacement.a & 0xFF000000 );
@@ -165,7 +204,7 @@ uint64_t hk_unk_set_color( uint64_t a, uint64_t b, uint64_t col ) {
 		}
 	}
 
-	return orig_unk_set_color( a, b, col );
+	return orig_unk_set_color( a, b, col, d );
 }
 
 // LoadResource hook
@@ -208,8 +247,6 @@ HGLOBAL __stdcall hk_LoadResource(
 LPVOID __stdcall hk_LockResource(
   HGLOBAL hResData
 ) {
-	hack_mixer_tracks = true;
-
 	const auto res = orig_LockResource( hResData );
 
 	for ( auto& resource : resources ) {
@@ -315,7 +352,15 @@ void start() {
 		const auto skin_buffer = read_file( path );
 		j = nlohmann::json::parse( skin_buffer.begin(), skin_buffer.end() );
 
-		const auto parse_kv = [] ( std::string key, nlohmann::json& value, bool flip_hex = false ) {
+		const auto flip = [] ( uint32_t& val ) {
+			uint32_t flipped = 0;
+			flipped |= ( val & 0xFF ) << 16;
+			flipped |= ( val & 0xFF00 );
+			flipped |= ( val & 0xFF0000 ) >> 16;
+			val = flipped;
+		};
+
+		const auto parse_kv = [&flip] ( std::string key, nlohmann::json& value, bool flip_hex = false ) {
 			col_replacement_t r;
 
 			std::stringstream ss;
@@ -329,14 +374,6 @@ void start() {
 			ss >> r.b;
 
 			if ( flip_hex ) {
-				const auto flip = [] ( uint32_t& val ) {
-					uint32_t flipped = 0;
-					flipped |= ( val & 0xFF ) << 16;
-					flipped |= ( val & 0xFF00 );
-					flipped |= ( val & 0xFF0000 ) >> 16;
-					val = flipped;
-				};
-
 				flip( r.a );
 				flip( r.b );
 			}
@@ -355,9 +392,19 @@ void start() {
 		const auto& _dfm_replacements = dfm_replacements;
 		const auto& _hook_replacements = hook_replacements;
 
-		std::stringstream ss;
-		ss << std::hex << j[ "mixerColor" ].get<std::string>();
-		ss >> mixer_color;
+		if ( j.contains( "mixerColor" ) ) {
+			replace_mixer_tracks = true;
+			std::stringstream ss;
+			ss << std::hex << j[ "mixerColor" ].get<std::string>();
+			ss >> mixer_color;
+		}
+
+		if ( j.contains( "buttonColors" ) ) {
+			replace_buttons = true;
+			std::stringstream ss;
+			ss << std::hex << j[ "buttonColors" ].get<std::string>();
+			ss >> button_colors;
+		}
 	} catch ( std::exception& e ) {
 		std::stringstream err;
 		err << "An exception occured when loading the skin file (" << current_skin_file << ")";

@@ -106,6 +106,10 @@ namespace dfm {
 			return m_name;
 		}
 
+		std::string& get_name_parent() {
+			return m_parent_name;
+		}
+
 		void to_binary( buffer_t& buf );
 		buffer_t get_full_binary();
 	public:
@@ -116,6 +120,7 @@ namespace dfm {
 		}
 
 		object& add_child( object o ) {
+			o.set_parent( this );
 			m_children.push_back( o );
 			return m_children[ m_children.size() - 1 ];
 		}

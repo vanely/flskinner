@@ -230,7 +230,9 @@ vec_byte_t process_resource( void* memory, size_t size ) {
 uint64_t hk_get_mixer_color( uint32_t a1 ) {
 	auto res = orig_get_mixer_color( a1 );
 
-	res = mixer_color;
+	if ( mixer_color ) {
+		res = mixer_color;
+	}
 
 	return res;
 }

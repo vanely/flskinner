@@ -10,6 +10,6 @@ namespace flskinner
     class Core
     {
         [DllImport("flskinner_core.dll", CallingConvention = CallingConvention.Cdecl)]
-        public extern static void inject(string fl_studio_path);
+        public extern static void inject(string directory, string fl_studio_path);
     }
 }

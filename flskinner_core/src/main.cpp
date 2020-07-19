@@ -2,10 +2,10 @@
 #include <iostream>
 
 extern "C" {
-	__declspec( dllexport ) void __cdecl inject(const char*);
+	__declspec( dllexport ) void __cdecl inject(const char*, const char*);
 }
 
-__declspec( dllexport ) void __cdecl inject( const char* fl_studio_path ) {
+__declspec( dllexport ) void __cdecl inject( const char* directory, const char* fl_studio_path ) {
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
 
@@ -21,7 +21,7 @@ __declspec( dllexport ) void __cdecl inject( const char* fl_studio_path ) {
 		FALSE,
 		CREATE_SUSPENDED,
 		NULL,
-		NULL,
+		directory,
 		&si,
 		&pi
 	);
@@ -62,5 +62,7 @@ __declspec( dllexport ) void __cdecl inject( const char* fl_studio_path ) {
 
 	VirtualFreeEx( hndl, address, 0, MEM_RELEASE );
 
+#ifndef _DEBUG
 	ResumeThread( pi.hThread );
+#endif
 }

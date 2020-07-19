@@ -40,7 +40,7 @@ namespace flskinner
 
         private void LaunchFL_Click(object sender, RoutedEventArgs e)
         {
-            Core.inject(Config.current.flStudioPath + @"\FL64.exe");
+            Core.inject(Config.current.flStudioPath, Config.current.flStudioPath + @"\FL64.exe");
         }
 
         private void OpenSkinsFolder_Click(object sender, RoutedEventArgs e)

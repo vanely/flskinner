@@ -14,7 +14,7 @@ It only works on Windows and with the 64-bit version of FL studio.
 ### Media
 
 ![](https://i.imgur.com/m0pAfJC.png)
-![](https://i.imgur.com/jMqjOli.png)
+![](https://i.imgur.com/m9ZZbgE.png)
 
 ### Is this piracy?
 

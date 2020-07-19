@@ -109,6 +109,16 @@ std::vector<col_replacement_t> hook_replacements = {
 	//{ 0x716C63, 0x292929 }
 };
 
+struct dfm_t {
+	std::string obj_name;
+	std::string val_name;
+	dfm::val v;
+	bool check_parent;
+	std::string parent_name;
+};
+
+std::vector<dfm_t> dfms = {};
+
 bool replace_mixer_tracks = false,
 	 replace_buttons = false;
 
@@ -157,14 +167,45 @@ void do_color_replacements( dfm::object& obj ) {
 		if ( c.get_val().m_type != dfm::type_t::int32 ) continue;
 		if ( c.get_name().find( "Color" ) == std::string::npos ) continue;
 
-		// we will replace font colors elsewhere
-		if ( c.get_name().find( "Font.Color" ) != std::string::npos ) continue;
-
 		for ( auto& replacement : dfm_replacements ) {
 			if ( ( c.get_val().m_num_val & 0xFFFFFF ) == ( replacement.a & 0xFFFFFF ) ) {
 				c.get_val().m_num_val = replacement.b | ( replacement.a & 0xFF000000 );
 
 				break;
+			}
+		}
+	}
+}
+
+void do_dfm_replacements( dfm::object& obj ) {
+	for ( auto& c : obj.get_children() ) {
+		if ( c.get_children().size() > 0 ) {
+			do_dfm_replacements( c );
+		}
+
+		for ( auto& dfm : dfms ) {
+			if ( c.get_name() == dfm.obj_name ) {
+				if ( dfm.check_parent && obj.get_name() != dfm.parent_name ) continue;
+
+				bool exists = false;
+				
+				for ( auto& c2 : c.get_children() ) {
+					if ( c2.get_name() == dfm.val_name ) {
+						exists = true;
+						c2.set_val( dfm.v );
+
+						break;
+					}
+				}
+
+				if ( !exists ) {
+					dfm::object o;
+					o.setup( dfm.val_name, dfm.v );
+
+					c.add_child_before( o );
+
+					printf( "test" );
+				}
 			}
 		}
 	}
@@ -181,6 +222,7 @@ vec_byte_t process_resource( void* memory, size_t size ) {
 
 	do_color_replacements( obj );
 	if ( replace_buttons ) do_button_color_replacements( obj );
+	do_dfm_replacements( obj );
 
 	return obj.get_full_binary().raw();
 }
@@ -308,6 +350,71 @@ bool replace( std::wstring& str, const std::wstring& from, const std::wstring& t
 	return true;
 }
 
+void flip( uint32_t& val ) {
+	uint32_t flipped = 0;
+	flipped |= ( val & 0xFF ) << 16;
+	flipped |= ( val & 0xFF00 );
+	flipped |= ( val & 0xFF0000 ) >> 16;
+	val = flipped;
+};
+
+col_replacement_t parse_col_kv( std::string key, nlohmann::json& value, bool flip_hex = false ) {
+	col_replacement_t r;
+
+	std::stringstream ss;
+	ss << std::hex << key;
+	ss >> r.a;
+
+	ss.str( "" );
+	ss.clear();
+
+	ss << std::hex << value.get<std::string>();
+	ss >> r.b;
+
+	if ( flip_hex ) {
+		flip( r.a );
+		flip( r.b );
+	}
+
+	return r;
+};
+
+dfm_t parse_dfm( std::string key, nlohmann::json val ) {
+	dfm_t dfm;
+
+	dfm.obj_name = key;
+	dfm.val_name = val[ "key" ].get<std::string>();
+	
+	dfm::val v;
+
+	const auto type = val[ "type" ].get<std::string>();
+
+	if ( type == "hex32" ) {
+		v.m_type = dfm::type_t::int32;
+		
+		uint32_t num_val;
+
+		std::stringstream ss;
+		ss << std::hex << val["value"].get<std::string>();
+		ss >> num_val;
+
+		flip( num_val );
+
+		v.m_num_val = num_val;
+	} else {
+		throw std::exception( "Unsupported DFM value type!" );
+	}
+
+	dfm.v = v;
+
+	if ( val.contains( "checkParent" ) ) {
+		dfm.check_parent = true;
+		dfm.parent_name = val[ "checkParent" ].get<std::string>();
+	}
+
+	return dfm;
+}
+
 void start() {
 	//AllocConsole();
 	//freopen( "CONOUT$", "w", stdout );
@@ -352,45 +459,19 @@ void start() {
 		const auto skin_buffer = read_file( path );
 		j = nlohmann::json::parse( skin_buffer.begin(), skin_buffer.end() );
 
-		const auto flip = [] ( uint32_t& val ) {
-			uint32_t flipped = 0;
-			flipped |= ( val & 0xFF ) << 16;
-			flipped |= ( val & 0xFF00 );
-			flipped |= ( val & 0xFF0000 ) >> 16;
-			val = flipped;
-		};
-
-		const auto parse_kv = [&flip] ( std::string key, nlohmann::json& value, bool flip_hex = false ) {
-			col_replacement_t r;
-
-			std::stringstream ss;
-			ss << std::hex << key;
-			ss >> r.a;
-
-			ss.str( "" );
-			ss.clear();
-
-			ss << std::hex << value.get<std::string>();
-			ss >> r.b;
-
-			if ( flip_hex ) {
-				flip( r.a );
-				flip( r.b );
-			}
-
-			return r;
-		};
+		
 
 		for ( auto& item : j[ "dfmReplacements" ].items() ) {
-			dfm_replacements.push_back( parse_kv( item.key(), item.value(), true ) );
+			dfm_replacements.push_back( parse_col_kv( item.key(), item.value(), true ) );
 		}
 
 		for ( auto& item : j[ "hookReplacements" ].items() ) {
-			hook_replacements.push_back( parse_kv( item.key(), item.value() ) );
+			hook_replacements.push_back( parse_col_kv( item.key(), item.value() ) );
 		}
 
-		const auto& _dfm_replacements = dfm_replacements;
-		const auto& _hook_replacements = hook_replacements;
+		for ( auto& item : j[ "dfm" ].items() ) {
+			dfms.push_back( parse_dfm( item.key(), item.value() ) );
+		}
 
 		if ( j.contains( "mixerColor" ) ) {
 			replace_mixer_tracks = true;

@@ -75,10 +75,14 @@ namespace dfm {
 
 	class object {
 	public:
+		object()
+			: m_parent(nullptr) {}
+
 		void setup( std::string name, std::string parent_name = "" ) {
 			m_name = name;
 			m_parent_name = parent_name;
 			m_is_object = true;
+			m_parent = nullptr;
 		}
 
 		void setup( std::string name, type_t type, std::string value ) {
@@ -96,10 +100,15 @@ namespace dfm {
 		void setup( std::string name, val v ) {
 			m_name = name;
 			m_val = v;
+			m_parent = nullptr;
 		}
 
 		val& get_val() {
 			return m_val;
+		}
+
+		void set_val(val v) {
+			m_val = v;
 		}
 
 		std::string& get_name() {
@@ -125,6 +134,12 @@ namespace dfm {
 			return m_children[ m_children.size() - 1 ];
 		}
 
+		object& add_child_before( object o ) {
+			o.set_parent( this );
+			m_children.insert( m_children.begin(), o );
+			return m_children[0];
+		}
+
 		std::vector<object>& get_children() {
 			return m_children;
 		}
@@ -148,7 +163,7 @@ namespace dfm {
 		bool m_is_object = false;
 		bool m_is_root = false;
 		std::string m_name, m_parent_name;
-		object* m_parent;
+		object* m_parent = nullptr;
 		val m_val;
 		std::vector<object> m_children;
 		obj_type_t m_obj_type;

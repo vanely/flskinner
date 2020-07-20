@@ -390,6 +390,10 @@ void flip( uint32_t& val ) {
 col_replacement_t parse_col_kv( std::string key, nlohmann::json& value, bool flip_hex = false ) {
 	col_replacement_t r;
 
+	if ( key[ 0 ] == '#' ) {
+		key = key.substr( 1 );
+	}
+
 	std::stringstream ss;
 	ss << std::hex << key;
 	ss >> r.a;
@@ -397,7 +401,13 @@ col_replacement_t parse_col_kv( std::string key, nlohmann::json& value, bool fli
 	ss.str( "" );
 	ss.clear();
 
-	ss << std::hex << value.get<std::string>();
+	auto val = value.get<std::string>();
+
+	if ( val[ 0 ] == '#' ) {
+		val = val.substr( 1 );
+	}
+
+	ss << std::hex << val;
 	ss >> r.b;
 
 	if ( flip_hex ) {
@@ -423,8 +433,14 @@ dfm_t parse_dfm( std::string key, nlohmann::json val ) {
 		
 		uint32_t num_val;
 
+		auto hex_val = val[ "value" ].get<std::string>();
+
+		if ( hex_val[ 0 ] == '#' ) {
+			hex_val = hex_val.substr( 1 );
+		}
+
 		std::stringstream ss;
-		ss << std::hex << val["value"].get<std::string>();
+		ss << std::hex << hex_val;
 		ss >> num_val;
 
 		flip( num_val );
@@ -502,37 +518,28 @@ void start() {
 			dfms.push_back( parse_dfm( item.key(), item.value() ) );
 		}
 
-		if ( j.contains( "mixerColor" ) ) {
-			replace_mixer_tracks = true;
-			std::stringstream ss;
-			ss << std::hex << j[ "mixerColor" ].get<std::string>();
-			ss >> mixer_color;
-		}
+		const auto setup_misc_val = [ &j ] ( std::string name, uint32_t& col, bool& toggle, bool should_flip = false ) {
+			if ( j.contains( name ) ) {
+				toggle = true;
 
-		if ( j.contains( "buttonColors" ) ) {
-			replace_buttons = true;
-			std::stringstream ss;
-			ss << std::hex << j[ "buttonColors" ].get<std::string>();
-			ss >> button_colors;
-		}
+				auto val = j[ name ].get<std::string>();
 
-		if ( j.contains( "browserColor" ) ) {
-			replace_browser_color = true;
-			std::stringstream ss;
-			ss << std::hex << j[ "browserColor" ].get<std::string>();
-			ss >> browser_color;
+				if ( val[ 0 ] == '#' ) {
+					val = val.substr( 1 );
+				}
 
-			flip( browser_color );
-		}
+				std::stringstream ss;
+				ss << std::hex << val;
+				ss >> col;
 
-		if ( j.contains( "browserFilesColor" ) ) {
-			replace_browser_files_color = true;
-			std::stringstream ss;
-			ss << std::hex << j[ "browserFilesColor" ].get<std::string>();
-			ss >> browser_files_color;
+				if ( should_flip ) flip( col );
+			}
+		};
 
-			flip( browser_files_color );
-		}
+		setup_misc_val( "mixerColor", mixer_color, replace_mixer_tracks );
+		setup_misc_val( "buttonColors", button_colors, replace_buttons );
+		setup_misc_val( "browserColor", browser_color, replace_browser_color, true );
+		setup_misc_val( "browserFilesColor", browser_files_color, replace_browser_files_color, true );
 	} catch ( std::exception& e ) {
 		std::stringstream err;
 		err << "An exception occured when loading the skin file (" << current_skin_file << ")";

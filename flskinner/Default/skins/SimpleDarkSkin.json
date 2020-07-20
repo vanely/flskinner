@@ -2,185 +2,191 @@
   "name": "Simple Dark Skin",
   "author": "liquid (discord: liquid#1337)",
   "dfmReplacements": {
-    "596267": "121212",
-    "5f686d": "191919",
-    "3f484d": "151515",
-    "5f7374": "1b1b1b",
-    "536566": "151515",
-    "3e464b": "151515",
-    "30383d": "151515",
-    "313c45": "272727",
-    "50595e": "292929",
-    "30A8FF": "F98261",
-    "FB9244": "798be3"
+    "#596267": "#121212",
+    "#5f686d": "#191919",
+    "#3f484d": "#151515",
+    "#5f7374": "#1b1b1b",
+    "#536566": "#151515",
+    "#3e464b": "#151515",
+    "#30383d": "#151515",
+    "#313c45": "#272727",
+    "#50595e": "#292929",
+    "#30A8FF": "#F98261",
+    "#FB9244": "#798be3"
   },
   "hookReplacements": {
-    "313C45": "151515",
-    "34444e": "171717",
-    "5F686D": "29363E",
-    "22323c": "101010",
-    "1e2b31": "171F22",
-    "716C63": "292929",
-    "2a3a44": "131313",
-    "10202a": "000000",
-    "283842": "000000",
-    "f80512": "202020"
+    "#313C45": "#151515",
+    "#34444e": "#171717",
+    "#5F686D": "#29363E",
+    "#22323c": "#101010",
+    "#1e2b31": "#171F22",
+    "#716C63": "#292929",
+    "#2a3a44": "#131313",
+    "#10202a": "#000000",
+    "#283842": "#000000",
+    "#f80512": "#202020"
   },
-  "mixerColor": "0F0F0F",
-  "buttonColors": "0F0F0F",
-  "browserColor": "303030",
-  "browserFilesColor": "101010",
+  "mixerColor": "#0F0F0F",
+  "buttonColors": "#0F0F0F",
+  "browserColor": "#303030",
+  "browserFilesColor": "#101010",
   "dfm": {
     "MetronomeBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "ee1a1a"
+      "value": "#ee1a1a"
     },
     "LoopRecordBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "eee51a"
+      "value": "#eee51a"
     },
     "BlendRecordBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "1aee5e"
+      "value": "#1aee5e"
     },
     "PrecountBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "1abeee"
+      "value": "#1abeee"
     },
     "StartOnInputBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "cc1aee"
+      "value": "#cc1aee"
     },
 
     "KbToMIDIBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "cc1aee"
+      "value": "#cc1aee"
     },
     "AutoScrollBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "1abeee"
+      "value": "#1abeee"
     },
     "StepEditBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "1aee5e"
+      "value": "#1aee5e"
     },
     "EnableGroupsBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "eee51a"
+      "value": "#eee51a"
     },
     "MultiLinkBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "ee1a1a"
+      "value": "#ee1a1a"
     },
 
     "ViewPLBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "ee1a1a"
+      "value": "#ee1a1a"
     },
     "ViewSSBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "eee51a"
+      "value": "#eee51a"
     },
     "ViewPRBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "1aee5e"
+      "value": "#1aee5e"
     },
     "ViewSBBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "1abeee"
+      "value": "#1abeee"
     },
     "ViewFXBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "cc1aee"
+      "value": "#cc1aee"
     },
 
     "ViewProjPickerBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "ee1a1a"
+      "value": "#ee1a1a"
     },
     "ViewPlugPickerBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "eee51a"
+      "value": "#eee51a"
     },
     "ViewTTBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "1aee5e"
+      "value": "#1aee5e"
     },
     "ViewKbBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "1abeee"
+      "value": "#1abeee"
     },
 
     "SaveAsBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "ee1a1a"
+      "value": "#ee1a1a"
     },
     "RenderBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "eee51a"
+      "value": "#eee51a"
     },
     "EditAudioBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "1aee5e"
+      "value": "#1aee5e"
     },
     "RecAudioBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "1abeee"
+      "value": "#1abeee"
     },
 
     "SongSetBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "ee1a1a"
+      "value": "#ee1a1a"
     },
     "HelpBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "eee51a"
+      "value": "#eee51a"
     },
     "ArrangeBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "1aee5e"
+      "value": "#1aee5e"
     },
     "UndoBtn": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "1abeee"
+      "value": "#1abeee"
     },
 
     "CPUGauge": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "1abeee"
+      "value": "#1abeee"
     },
     "PolyDigiLabel": {
       "key": "QuickFont.Color",
       "type": "hex32",
-      "value": "ee1a1a"
+      "value": "#ee1a1a"
+    },
+
+    "WAVScope": {
+      "key": "LineColor",
+      "type": "hex32",
+      "value": "#FF7AB6"
     }
   }
 }

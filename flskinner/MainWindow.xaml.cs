@@ -28,6 +28,8 @@ namespace flskinner
         {
             InitializeComponent();
 
+            Version.Content = Core.Version;
+
             Bootstrap.Setup();
 
             flStudioPath.Content = Config.current.flStudioPath;

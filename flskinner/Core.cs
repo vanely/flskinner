@@ -11,5 +11,14 @@ namespace flskinner
     {
         [DllImport("flskinner_core.dll", CallingConvention = CallingConvention.Cdecl)]
         public extern static void inject(string directory, string fl_studio_path);
+
+        [DllImport("flskinner_core.dll", CallingConvention = CallingConvention.Cdecl)]
+        public extern static IntPtr get_version();
+
+        public static string Version { 
+            get {
+                return System.Runtime.InteropServices.Marshal.PtrToStringAnsi(get_version());
+            } 
+        }
     }
 }

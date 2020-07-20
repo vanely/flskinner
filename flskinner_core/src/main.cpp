@@ -2,7 +2,8 @@
 #include <iostream>
 
 extern "C" {
-	__declspec( dllexport ) void __cdecl inject(const char*, const char*);
+	__declspec( dllexport ) void __cdecl inject( const char*, const char* );
+	__declspec( dllexport ) const char* __cdecl get_version();
 }
 
 __declspec( dllexport ) void __cdecl inject( const char* directory, const char* fl_studio_path ) {
@@ -65,4 +66,12 @@ __declspec( dllexport ) void __cdecl inject( const char* directory, const char* 
 #ifndef _DEBUG
 	ResumeThread( pi.hThread );
 #endif
+}
+
+#define STRINGIZER(arg)     #arg
+#define STR_VALUE(arg)      STRINGIZER(arg)
+#define BUILD_VERSION_STRING STR_VALUE(BUILD_VERSION)
+
+__declspec( dllexport ) const char* __cdecl get_version() {
+	return BUILD_VERSION_STRING;
 }

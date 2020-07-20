@@ -119,11 +119,15 @@ struct dfm_t {
 
 std::vector<dfm_t> dfms = {};
 
-bool replace_mixer_tracks = false,
-	 replace_buttons = false;
+bool
+replace_mixer_tracks = false,
+replace_buttons = false,
+replace_browser_color = false;
 
-uint32_t mixer_color = 0,
-		 button_colors = 0;
+uint32_t 
+mixer_color = 0,
+button_colors = 0,
+browser_color = 0;
 
 void do_button_color_replacements( dfm::object& obj ) {
 	for ( auto& c : obj.get_children() ) {
@@ -270,6 +274,18 @@ HGLOBAL __stdcall hk_LoadResource(
 
 		MH_CreateHook( unk_set_color_addy, hk_unk_set_color, reinterpret_cast< void** >( &orig_unk_set_color ) );
 		MH_EnableHook( unk_set_color_addy );
+
+		if ( replace_browser_color ) {
+			// .text:0000000001EC9131 4C 8B 6F 58         mov     r13, [rdi+58h]
+			// .text:0000000001EC9135 8B 05 F9 83 3D 00   mov     eax, cs : dword_22A1534 // <-- the browser color
+			auto browser_color_addy = pattern::find( module_name.c_str(), "4C 8B 6F 58" );
+			browser_color_addy += 4;
+
+			auto browser_color_rel = *reinterpret_cast< uint32_t* >( browser_color_addy + 2 );
+			auto browser_color_ptr = reinterpret_cast< uint32_t* >( browser_color_addy + browser_color_rel + 6 );
+
+			*browser_color_ptr = ( browser_color | 0xFF000000 );
+		}
 
 		resources_loaded = true;
 	}
@@ -487,6 +503,15 @@ void start() {
 			std::stringstream ss;
 			ss << std::hex << j[ "buttonColors" ].get<std::string>();
 			ss >> button_colors;
+		}
+
+		if ( j.contains( "browserColor" ) ) {
+			replace_browser_color = true;
+			std::stringstream ss;
+			ss << std::hex << j[ "browserColor" ].get<std::string>();
+			ss >> browser_color;
+
+			flip( browser_color );
 		}
 	} catch ( std::exception& e ) {
 		std::stringstream err;

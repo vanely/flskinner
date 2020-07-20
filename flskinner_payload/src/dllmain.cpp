@@ -122,12 +122,14 @@ std::vector<dfm_t> dfms = {};
 bool
 replace_mixer_tracks = false,
 replace_buttons = false,
-replace_browser_color = false;
+replace_browser_color = false,
+replace_browser_files_color = false;
 
-uint32_t 
+uint32_t
 mixer_color = 0,
 button_colors = 0,
-browser_color = 0;
+browser_color = 0,
+browser_files_color = 0;
 
 void do_button_color_replacements( dfm::object& obj ) {
 	for ( auto& c : obj.get_children() ) {
@@ -285,6 +287,15 @@ HGLOBAL __stdcall hk_LoadResource(
 			auto browser_color_ptr = reinterpret_cast< uint32_t* >( browser_color_addy + browser_color_rel + 6 );
 
 			*browser_color_ptr = ( browser_color | 0xFF000000 );
+		}
+
+		if ( replace_browser_files_color ) {
+			auto browser_color_addy = pattern::find( module_name.c_str(), "44 8B 2D ? ? ? ? 41 81 E5 ? ? ? ?" );
+
+			auto browser_color_rel = *reinterpret_cast< uint32_t* >( browser_color_addy + 3 );
+			auto browser_color_ptr = reinterpret_cast< uint32_t* >( browser_color_addy + browser_color_rel + 7 );
+
+			*browser_color_ptr = ( browser_files_color | 0xFF000000 );
 		}
 
 		resources_loaded = true;
@@ -512,6 +523,15 @@ void start() {
 			ss >> browser_color;
 
 			flip( browser_color );
+		}
+
+		if ( j.contains( "browserFilesColor" ) ) {
+			replace_browser_files_color = true;
+			std::stringstream ss;
+			ss << std::hex << j[ "browserFilesColor" ].get<std::string>();
+			ss >> browser_files_color;
+
+			flip( browser_files_color );
 		}
 	} catch ( std::exception& e ) {
 		std::stringstream err;

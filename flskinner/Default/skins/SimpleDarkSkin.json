@@ -29,6 +29,7 @@
   "mixerColor": "0F0F0F",
   "buttonColors": "0F0F0F",
   "browserColor": "303030",
+  "browserFilesColor": "101010",
   "dfm": {
     "MetronomeBtn": {
       "key": "QuickFont.Color",

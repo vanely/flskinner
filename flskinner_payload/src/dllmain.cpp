@@ -209,8 +209,6 @@ void do_dfm_replacements( dfm::object& obj ) {
 					o.setup( dfm.val_name, dfm.v );
 
 					c.add_child_before( o );
-
-					printf( "test" );
 				}
 			}
 		}
@@ -537,7 +535,7 @@ void start() {
 		};
 
 		setup_misc_val( "mixerColor", mixer_color, replace_mixer_tracks );
-		setup_misc_val( "buttonColors", button_colors, replace_buttons );
+		setup_misc_val( "buttonColors", button_colors, replace_buttons, true );
 		setup_misc_val( "browserColor", browser_color, replace_browser_color, true );
 		setup_misc_val( "browserFilesColor", browser_files_color, replace_browser_files_color, true );
 	} catch ( std::exception& e ) {

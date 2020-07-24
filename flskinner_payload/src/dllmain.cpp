@@ -306,6 +306,15 @@ HGLOBAL __stdcall hk_LoadResource(
 			*browser_color_ptr = ( browser_color | 0xFF000000 );
 		}
 
+		if ( replace_browser_files_color ) {
+			auto browser_color_addy = pattern::find( module_name.c_str(), "44 8B 2D ? ? ? ? 41 81 E5 ? ? ? ?" );
+
+			auto browser_color_rel = *reinterpret_cast< uint32_t* >( browser_color_addy + 3 );
+			auto browser_color_ptr = reinterpret_cast< uint32_t* >( browser_color_addy + browser_color_rel + 7 );
+
+			*browser_color_ptr = ( browser_files_color | 0xFF000000 );
+		}
+
 		auto sequencer_colors = pattern::find_rel( module_name.c_str(), "48 8D 05 ? ? ? ? 8B 4C 24 40" );
 
 		if ( replace_sequencer_blocks )

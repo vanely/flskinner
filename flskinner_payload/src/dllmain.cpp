@@ -7,6 +7,7 @@
 #include <locale>
 #include <codecvt>
 #include <filesystem>
+#include <regex>
 namespace fs = std::filesystem;
 
 #include <shlobj.h>
@@ -458,6 +459,15 @@ dfm_t parse_dfm( std::string key, nlohmann::json val ) {
 	return dfm;
 }
 
+std::string uncommentify( std::string json ) {
+	// single line comments
+	json = std::regex_replace( json, std::regex( R"(\/\/.*)" ), "" );
+	// block comments
+	json = std::regex_replace( json, std::regex( R"(\/\*(\*(?!\/)|[^*])*\*\/)" ), "" );
+
+	return json;
+}
+
 void start() {
 	//AllocConsole();
 	//freopen( "CONOUT$", "w", stdout );
@@ -481,7 +491,9 @@ void start() {
 
 	try {
 		const auto config_buffer = read_file( path + L"flskinner.json" );
-		j = nlohmann::json::parse( config_buffer.begin(), config_buffer.end() );
+		const auto config = uncommentify( std::string( config_buffer.begin(), config_buffer.end() ) );
+
+		j = nlohmann::json::parse( config );
 
 		current_skin_file = j[ "currentSkin" ].get<std::string>();
 
@@ -500,9 +512,9 @@ void start() {
 
 	try {
 		const auto skin_buffer = read_file( path );
-		j = nlohmann::json::parse( skin_buffer.begin(), skin_buffer.end() );
+		const auto skin = uncommentify( std::string( skin_buffer.begin(), skin_buffer.end() ) );
 
-		
+		j = nlohmann::json::parse( skin );
 
 		for ( auto& item : j[ "dfmReplacements" ].items() ) {
 			dfm_replacements.push_back( parse_col_kv( item.key(), item.value(), true ) );

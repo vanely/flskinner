@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Win32;
@@ -47,7 +48,8 @@ namespace flskinner
                     .GetManifestResourceNames()
                     .Where(name => name.StartsWith(prefix));
 
-                foreach (var name in resourceNames) {
+                foreach (var name in resourceNames)
+                {
                     var stream = assembly.GetManifestResourceStream(name);
 
                     using (StreamReader reader = new StreamReader(stream))
@@ -60,7 +62,7 @@ namespace flskinner
 
             try
             {
-                Config.current = JsonConvert.DeserializeObject<Config>(File.ReadAllText(mainConfigPath));
+                Config.current = JsonConvert.DeserializeObject<Config>(Uncommentify(File.ReadAllText(mainConfigPath)));
             }
             catch (Exception e)
             {
@@ -93,7 +95,7 @@ namespace flskinner
             {
                 try
                 {
-                    var skin = JsonConvert.DeserializeObject<Skin>(File.ReadAllText(skinPath));
+                    var skin = JsonConvert.DeserializeObject<Skin>(Uncommentify(File.ReadAllText(skinPath)));
                     skin.fileName = Path.GetFileName(skinPath);
                     Skin.skins.Add(skin);
                 }
@@ -137,6 +139,16 @@ namespace flskinner
             {
                 System.Environment.Exit(1);
             }
+        }
+
+        private static string Uncommentify(string json)
+        {
+            // single line comments
+            json = Regex.Replace(json, @"\/\/.*", "");
+            // block comments
+            json = Regex.Replace(json, @"\/\*(\*(?!\/)|[^*])*\*\/", "");
+
+            return json;
         }
     }
 }

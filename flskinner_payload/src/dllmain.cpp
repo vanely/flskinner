@@ -124,13 +124,21 @@ bool
 replace_mixer_tracks = false,
 replace_buttons = false,
 replace_browser_color = false,
-replace_browser_files_color = false;
+replace_browser_files_color = false,
+replace_sequencer_blocks = false,
+replace_sequencer_blocks_highlight = false,
+replace_sequencer_blocks_alt = false,
+replace_sequencer_blocks_alt_highlight = false;
 
 uint32_t
 mixer_color = 0,
 button_colors = 0,
 browser_color = 0,
-browser_files_color = 0;
+browser_files_color = 0,
+sequencer_blocks = 0,
+sequencer_blocks_highlight = 0,
+sequencer_blocks_alt = 0,
+sequencer_blocks_alt_highlight = 0;
 
 void do_button_color_replacements( dfm::object& obj ) {
 	for ( auto& c : obj.get_children() ) {
@@ -288,14 +296,19 @@ HGLOBAL __stdcall hk_LoadResource(
 			*browser_color_ptr = ( browser_color | 0xFF000000 );
 		}
 
-		if ( replace_browser_files_color ) {
-			auto browser_color_addy = pattern::find( module_name.c_str(), "44 8B 2D ? ? ? ? 41 81 E5 ? ? ? ?" );
+		auto sequencer_colors = pattern::find_rel( module_name.c_str(), "48 8D 05 ? ? ? ? 8B 4C 24 40 " );
 
-			auto browser_color_rel = *reinterpret_cast< uint32_t* >( browser_color_addy + 3 );
-			auto browser_color_ptr = reinterpret_cast< uint32_t* >( browser_color_addy + browser_color_rel + 7 );
+		if ( replace_sequencer_blocks )
+			*reinterpret_cast< uint32_t* >( sequencer_colors + 0x0 ) = ( sequencer_blocks | 0xFF000000 );
 
-			*browser_color_ptr = ( browser_files_color | 0xFF000000 );
-		}
+		if ( replace_sequencer_blocks_highlight )
+			*reinterpret_cast< uint32_t* >( sequencer_colors + 0x8 ) = ( sequencer_blocks_highlight | 0xFF000000 );
+
+		if ( replace_sequencer_blocks_alt )
+			*reinterpret_cast< uint32_t* >( sequencer_colors + 0x4 ) = ( sequencer_blocks_alt | 0xFF000000 );
+
+		if ( replace_sequencer_blocks_alt_highlight )
+			*reinterpret_cast< uint32_t* >( sequencer_colors + 0xC ) = ( sequencer_blocks_alt_highlight | 0xFF000000 );
 
 		resources_loaded = true;
 	}
@@ -550,6 +563,11 @@ void start() {
 		setup_misc_val( "buttonColors", button_colors, replace_buttons, true );
 		setup_misc_val( "browserColor", browser_color, replace_browser_color, true );
 		setup_misc_val( "browserFilesColor", browser_files_color, replace_browser_files_color, true );
+
+		setup_misc_val( "sequencerBlocks", sequencer_blocks, replace_sequencer_blocks, true );
+		setup_misc_val( "sequencerBlocksHighlight", sequencer_blocks_highlight, replace_sequencer_blocks_highlight, true );
+		setup_misc_val( "sequencerBlocksAlt", sequencer_blocks_alt, replace_sequencer_blocks_alt, true );
+		setup_misc_val( "sequencerBlocksAltHighlight", sequencer_blocks_alt_highlight, replace_sequencer_blocks_alt_highlight, true );
 	} catch ( std::exception& e ) {
 		std::stringstream err;
 		err << "An exception occured when loading the skin file (" << current_skin_file << ")";

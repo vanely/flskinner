@@ -128,7 +128,8 @@ replace_browser_files_color = false,
 replace_sequencer_blocks = false,
 replace_sequencer_blocks_highlight = false,
 replace_sequencer_blocks_alt = false,
-replace_sequencer_blocks_alt_highlight = false;
+replace_sequencer_blocks_alt_highlight = false,
+replace_default_pattern_color = false;
 
 uint32_t
 mixer_color = 0,
@@ -138,7 +139,8 @@ browser_files_color = 0,
 sequencer_blocks = 0,
 sequencer_blocks_highlight = 0,
 sequencer_blocks_alt = 0,
-sequencer_blocks_alt_highlight = 0;
+sequencer_blocks_alt_highlight = 0,
+default_pattern_color = 0;
 
 void do_button_color_replacements( dfm::object& obj ) {
 	for ( auto& c : obj.get_children() ) {
@@ -264,6 +266,14 @@ uint64_t hk_unk_set_color( uint64_t a, uint64_t b, uint64_t col, uint64_t d ) {
 	return orig_unk_set_color( a, b, col, d );
 }
 
+template <typename T>
+void force_write( uintptr_t address, T data ) {
+	DWORD old_protect;
+	VirtualProtect( reinterpret_cast< void* >( address ), sizeof( T ), PAGE_READWRITE, &old_protect );
+	*reinterpret_cast< T* >( address ) = data;
+	VirtualProtect( reinterpret_cast< void* >( address ), sizeof( T ), old_protect, &old_protect );
+}
+
 // LoadResource hook
 HGLOBAL __stdcall hk_LoadResource(
   HMODULE hModule,
@@ -296,7 +306,7 @@ HGLOBAL __stdcall hk_LoadResource(
 			*browser_color_ptr = ( browser_color | 0xFF000000 );
 		}
 
-		auto sequencer_colors = pattern::find_rel( module_name.c_str(), "48 8D 05 ? ? ? ? 8B 4C 24 40 " );
+		auto sequencer_colors = pattern::find_rel( module_name.c_str(), "48 8D 05 ? ? ? ? 8B 4C 24 40" );
 
 		if ( replace_sequencer_blocks )
 			*reinterpret_cast< uint32_t* >( sequencer_colors + 0x0 ) = ( sequencer_blocks | 0xFF000000 );
@@ -309,6 +319,14 @@ HGLOBAL __stdcall hk_LoadResource(
 
 		if ( replace_sequencer_blocks_alt_highlight )
 			*reinterpret_cast< uint32_t* >( sequencer_colors + 0xC ) = ( sequencer_blocks_alt_highlight | 0xFF000000 );
+
+		if ( replace_default_pattern_color ) {
+			const auto replacement1_addy = pattern::find( module_name.c_str(), "74 1E C7 C1 ? ? ? ?" ) + 36;
+			const auto replacement2_addy = pattern::find( module_name.c_str(), "74 09 81 78 ? ? ? ? ?" ) + 5;
+
+			force_write( replacement1_addy, default_pattern_color );
+			force_write( replacement2_addy, default_pattern_color );
+		}
 
 		resources_loaded = true;
 	}
@@ -568,6 +586,8 @@ void start() {
 		setup_misc_val( "sequencerBlocksHighlight", sequencer_blocks_highlight, replace_sequencer_blocks_highlight, true );
 		setup_misc_val( "sequencerBlocksAlt", sequencer_blocks_alt, replace_sequencer_blocks_alt, true );
 		setup_misc_val( "sequencerBlocksAltHighlight", sequencer_blocks_alt_highlight, replace_sequencer_blocks_alt_highlight, true );
+
+		setup_misc_val( "defaultPatternColor", default_pattern_color, replace_default_pattern_color, true );
 	} catch ( std::exception& e ) {
 		std::stringstream err;
 		err << "An exception occured when loading the skin file (" << current_skin_file << ")";

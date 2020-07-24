@@ -33,8 +33,9 @@
   "browserFilesColor": "#101010",
   "sequencerBlocks": "#405054",
   "sequencerBlocksHighlight": "#92A2AC",
-  "sequencerBlocksAlt": "#9A9A9A",
-  "sequencerBlocksAltHighlight": "#FFFFFF",
+  "sequencerBlocksAlt": "#E1B0DF",
+  "sequencerBlocksAltHighlight": "#F25EED",
+  "defaultPatternColor": "#242424",
   "dfm": {
     "MetronomeBtn": {
       "key": "QuickFont.Color",

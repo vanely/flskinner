@@ -12,7 +12,10 @@
     "#313c45": "#272727",
     "#50595e": "#292929",
     "#30A8FF": "#F98261",
-    "#FB9244": "#798be3"
+    "#FB9244": "#798be3",
+    "#B9C8CF": "#151515",
+    "#3C454B": "#151515",
+    "#4D565C": "#171717"
   },
   "hookReplacements": {
     "#313C45": "#151515",
@@ -25,7 +28,11 @@
     "#2a3a44": "#131313",
     "#10202a": "#000000",
     "#283842": "#000000",
-    "#f80512": "#202020"
+    "#f80512": "#202020",
+    "#495257": "#FF0000",
+    "#4B5459": "#171717",
+    "#495257": "#171717",
+    "#4A5358": "#171717"
   },
   "mixerColor": "#0F0F0F",
   "buttonColors": "#0F0F0F",
@@ -36,170 +43,252 @@
   "sequencerBlocksAlt": "#E1B0DF",
   "sequencerBlocksAltHighlight": "#F25EED",
   "defaultPatternColor": "#242424",
-  "dfm": {
-    "MetronomeBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#ee1a1a"
-    },
-    "LoopRecordBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#eee51a"
-    },
-    "BlendRecordBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#1aee5e"
-    },
-    "PrecountBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#1abeee"
-    },
-    "StartOnInputBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#cc1aee"
-    },
-
-    "KbToMIDIBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#cc1aee"
-    },
-    "AutoScrollBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#1abeee"
-    },
-    "StepEditBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#1aee5e"
-    },
-    "EnableGroupsBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#eee51a"
-    },
-    "MultiLinkBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#ee1a1a"
-    },
-
-    "ViewPLBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#ee1a1a"
-    },
-    "ViewSSBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#eee51a"
-    },
-    "ViewPRBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#1aee5e"
-    },
-    "ViewSBBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#1abeee"
-    },
-    "ViewFXBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#cc1aee"
-    },
-
-    "ViewProjPickerBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#ee1a1a"
-    },
-    "ViewPlugPickerBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#eee51a"
-    },
-    "ViewTTBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#1aee5e"
-    },
-    "ViewKbBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#1abeee"
-    },
-
-    "SaveAsBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#ee1a1a"
-    },
-    "RenderBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#eee51a"
-    },
-    "EditAudioBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#1aee5e"
-    },
-    "RecAudioBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#1abeee"
-    },
-
-    "SongSetBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#ee1a1a"
-    },
-    "HelpBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#eee51a"
-    },
-    "ArrangeBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#1aee5e"
-    },
-    "UndoBtn": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#1abeee"
-    },
-
-    "CPUGauge": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#1abeee"
-    },
-    "PolyDigiLabel": {
-      "key": "QuickFont.Color",
-      "type": "hex32",
-      "value": "#ee1a1a"
-    },
-
-    "WAVScope": {
-      "key": "LineColor",
-      "type": "hex32",
-      "value": "#FF7AB6"
-    },
-
-    "TimeScroller": {
-      "checkParent": "EventEditForm",
-      "key": "Color",
-      "type": "hex32",
-      "value": "#202020"
-    }
+  "dfm2": {
+    "*": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#FFE6FB",
+        "noCreate": true
+      },
+      {
+        "key": "Font.Color",
+        "type": "hex32",
+        "value": "#FFE6FB",
+        "noCreate": true
+      }
+    ],
+    "RecBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#B0B0B0",
+        "noCreate": true
+      },
+      {
+        "key": "Color",
+        "type": "hex32",
+        "value": "#FD6279",
+        "noCreate": true
+      }
+    ],
+    "MetronomeBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#ee1a1a"
+      }
+    ],
+    "LoopRecordBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#eee51a"
+      }
+    ],
+    "BlendRecordBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#1aee5e"
+      }
+    ],
+    "PrecountBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#1abeee"
+      }
+    ],
+    "StartOnInputBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#cc1aee"
+      }
+    ],
+    "KbToMIDIBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#cc1aee"
+      }
+    ],
+    "AutoScrollBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#1abeee"
+      }
+    ],
+    "StepEditBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#1aee5e"
+      }
+    ],
+    "EnableGroupsBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#eee51a"
+      }
+    ],
+    "MultiLinkBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#ee1a1a"
+      }
+    ],
+    "ViewPLBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#ee1a1a"
+      }
+    ],
+    "ViewSSBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#eee51a"
+      }
+    ],
+    "ViewPRBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#1aee5e"
+      }
+    ],
+    "ViewSBBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#1abeee"
+      }
+    ],
+    "ViewFXBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#cc1aee"
+      }
+    ],
+    "ViewProjPickerBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#ee1a1a"
+      }
+    ],
+    "ViewPlugPickerBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#eee51a"
+      }
+    ],
+    "ViewTTBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#1aee5e"
+      }
+    ],
+    "ViewKbBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#1abeee"
+      }
+    ],
+    "SaveAsBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#ee1a1a"
+      }
+    ],
+    "RenderBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#eee51a"
+      }
+    ],
+    "EditAudioBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#1aee5e"
+      }
+    ],
+    "RecAudioBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#1abeee"
+      }
+    ],
+    "SongSetBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#ee1a1a"
+      }
+    ],
+    "HelpBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#eee51a"
+      }
+    ],
+    "ArrangeBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#1aee5e"
+      }
+    ],
+    "UndoBtn": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#1abeee"
+      }
+    ],
+    "CPUGauge": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#1abeee"
+      }
+    ],
+    "PolyDigiLabel": [
+      {
+        "key": "QuickFont.Color",
+        "type": "hex32",
+        "value": "#ee1a1a"
+      }
+    ],
+    "WAVScope": [
+      {
+        "key": "LineColor",
+        "type": "hex32",
+        "value": "#FF7AB6"
+      }
+    ],
+    "TimeScroller": [
+      {
+        "checkParent": "EventEditForm",
+        "key": "Color",
+        "type": "hex32",
+        "value": "#202020"
+      }
+    ]
   }
 }

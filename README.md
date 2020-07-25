@@ -13,8 +13,8 @@ It only works on Windows and with the 64-bit version of FL studio.
 
 ### Media
 
+![](https://i.imgur.com/72dc4bZ.png)
 ![](https://i.imgur.com/m0pAfJC.png)
-![](https://i.imgur.com/wBiwFiO.png)
 
 ### Is this piracy?
 

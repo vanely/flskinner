@@ -339,6 +339,10 @@ HGLOBAL __stdcall hk_LoadResource(
 			force_write( replacement1_addy, default_pattern_color );
 			force_write( replacement2_addy, default_pattern_color );
 			force_write( replacement3_addy, default_pattern_color );
+
+			for ( auto occurence : pattern::find_all( module_name.c_str(), "81 78 08 48 51 56 00" ) ) {
+				force_write( occurence + 3, default_pattern_color );
+			}
 		}
 
 		resources_loaded = true;

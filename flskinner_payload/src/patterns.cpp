@@ -49,8 +49,30 @@ uintptr_t pattern::find( const char* mod, const char* pattern ) {
 	GetModuleInformation( GetCurrentProcess(), hmod, &modinfo, sizeof( MODULEINFO ) );
 
 	uintptr_t range_end = range_start + modinfo.SizeOfImage;
-
 	return find( range_start, range_end, pattern );
+}
+
+std::vector<uintptr_t> pattern::find_all( const char * mod, const char * pattern ) {
+	std::vector<uintptr_t> result;
+
+	const char* pattern_bytes = pattern;
+
+	const auto hmod = GetModuleHandle( mod );
+
+	uintptr_t range_start = ( uintptr_t ) hmod;
+
+	MODULEINFO modinfo = { 0 };
+	GetModuleInformation( GetCurrentProcess(), hmod, &modinfo, sizeof( MODULEINFO ) );
+
+	uintptr_t range_end = range_start + modinfo.SizeOfImage;
+
+	uintptr_t occurence;
+	while ( ( occurence = find( range_start, range_end, pattern ) ) != 0 ) {
+		result.push_back( occurence );
+		range_start = occurence + 1;
+	}
+
+	return result;
 }
 
 uintptr_t pattern::find_rel( const char* mod, const char* pattern, ptrdiff_t position, ptrdiff_t jmp_size, ptrdiff_t instruction_size ) {

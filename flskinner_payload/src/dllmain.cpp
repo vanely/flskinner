@@ -114,7 +114,8 @@ struct dfm_t {
 	std::string obj_name;
 	std::string val_name;
 	dfm::val v;
-	bool check_parent;
+	bool check_parent = false;
+	bool no_create;
 	std::string parent_name;
 };
 
@@ -201,7 +202,7 @@ void do_dfm_replacements( dfm::object& obj ) {
 		}
 
 		for ( auto& dfm : dfms ) {
-			if ( c.get_name() == dfm.obj_name ) {
+			if ( dfm.obj_name == "*" || c.get_name() == dfm.obj_name ) {
 				if ( dfm.check_parent && obj.get_name() != dfm.parent_name ) continue;
 
 				bool exists = false;
@@ -209,13 +210,14 @@ void do_dfm_replacements( dfm::object& obj ) {
 				for ( auto& c2 : c.get_children() ) {
 					if ( c2.get_name() == dfm.val_name ) {
 						exists = true;
+
 						c2.set_val( dfm.v );
 
 						break;
 					}
 				}
 
-				if ( !exists ) {
+				if ( !exists && !dfm.no_create ) {
 					dfm::object o;
 					o.setup( dfm.val_name, dfm.v );
 
@@ -458,11 +460,12 @@ col_replacement_t parse_col_kv( std::string key, nlohmann::json& value, bool fli
 };
 
 dfm_t parse_dfm( std::string key, nlohmann::json val ) {
-	dfm_t dfm;
+	dfm_t dfm = {};
 
 	dfm.obj_name = key;
 	dfm.val_name = val[ "key" ].get<std::string>();
-	
+	dfm.no_create = val.contains( "noCreate" ) ? val[ "noCreate" ].get<bool>() : false;
+
 	dfm::val v;
 
 	const auto type = val[ "type" ].get<std::string>();
@@ -564,8 +567,15 @@ void start() {
 			hook_replacements.push_back( parse_col_kv( item.key(), item.value() ) );
 		}
 
+		// this will be deprecated
 		for ( auto& item : j[ "dfm" ].items() ) {
 			dfms.push_back( parse_dfm( item.key(), item.value() ) );
+		}
+
+		for ( auto& item : j[ "dfm2" ].items() ) {
+			for ( auto& item2 : item.value().get<std::vector<nlohmann::json>>() ) {
+				dfms.push_back( parse_dfm( item.key(), item2 ) );
+			}
 		}
 
 		const auto setup_misc_val = [ &j ] ( std::string name, uint32_t& col, bool& toggle, bool should_flip = false ) {

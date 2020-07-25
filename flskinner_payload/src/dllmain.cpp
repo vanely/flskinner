@@ -334,9 +334,11 @@ HGLOBAL __stdcall hk_LoadResource(
 		if ( replace_default_pattern_color ) {
 			const auto replacement1_addy = pattern::find( module_name.c_str(), "74 1E C7 C1 ? ? ? ?" ) + 36;
 			const auto replacement2_addy = pattern::find( module_name.c_str(), "74 09 81 78 ? ? ? ? ?" ) + 5;
+			const auto replacement3_addy = pattern::find_rel( module_name.c_str(), "48 8D 0D ? ? ? ? 48 63 DB" );
 
 			force_write( replacement1_addy, default_pattern_color );
 			force_write( replacement2_addy, default_pattern_color );
+			force_write( replacement3_addy, default_pattern_color );
 		}
 
 		resources_loaded = true;

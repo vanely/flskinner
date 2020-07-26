@@ -26,11 +26,20 @@ namespace flskinner
     {
         public MainWindow()
         {
+            Bootstrap.Setup();
+
+            foreach (var arg in Environment.GetCommandLineArgs())
+            {
+                if (arg == "-nogui")
+                {
+                    Core.inject(Config.current.flStudioPath, Config.current.flStudioPath + @"\FL64.exe");
+                    Environment.Exit(0);
+                }
+            }
+
             InitializeComponent();
 
             Version.Content = Core.Version;
-
-            Bootstrap.Setup();
 
             flStudioPath.Content = Config.current.flStudioPath;
 

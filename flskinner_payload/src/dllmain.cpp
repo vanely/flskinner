@@ -494,6 +494,9 @@ dfm_t parse_dfm( std::string key, nlohmann::json val ) {
 		flip( num_val );
 
 		v.m_num_val = num_val;
+	} else if ( type == "string" ) {
+		v.m_type = dfm::type_t::string;
+		v.m_str_val = val[ "value" ].get<std::string>();
 	} else {
 		throw std::exception( "Unsupported DFM value type!" );
 	}

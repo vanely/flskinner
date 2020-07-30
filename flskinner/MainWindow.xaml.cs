@@ -48,16 +48,25 @@ namespace flskinner
             SkinsList.ItemsSource = Skin.skins;
             SkinsList.SelectedIndex = selectedIndex;
 
-            foreach (Skin s in Skin.skins.Where(x => x.fileName == Config.current.currentSkin))
-            {
-                currentSkin.Content = s.name;
-                break;
-            }
+            UpdateSkinLabel();
 
             setMixerColors.IsChecked = Config.current.setMixerColors;
             setGridColors.IsChecked = Config.current.setGridColors;
             setDefaultPatternColor.IsChecked = Config.current.setDefaultPatternColor;
             setPlaylistTrackColors.IsChecked = Config.current.setPlaylistTrackColors;
+        }
+
+        private void UpdateSkinLabel()
+        {
+            foreach (Skin s in Skin.skins)
+            {
+                if (s.fileName == Config.current.currentSkin)
+                {
+                    currentSkin.Content = s.name;
+
+                    break;
+                }
+            }
         }
 
         private void LaunchFL_Click(object sender, RoutedEventArgs e)
@@ -76,6 +85,8 @@ namespace flskinner
             {
                 Config.current.currentSkin = ((Skin)e.AddedItems[0]).fileName;
                 Config.current.Save();
+
+                UpdateSkinLabel();
             }
         }
 
@@ -114,6 +125,28 @@ namespace flskinner
         {
             Config.current.setPlaylistTrackColors = ((CheckBox)sender).IsChecked.Value;
             Config.current.Save();
+        }
+
+        private void CreateShortcut(object sender, RoutedEventArgs e)
+        {
+            var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var lnkName = "FL Studio (skinned)";
+
+            string lnkPath = System.IO.Path.Combine(desktopFolder, lnkName) + ".lnk";
+            System.IO.File.WriteAllBytes(lnkPath, new byte[] { });
+
+            Shell32.Shell shl = new Shell32.ShellClass();
+            Shell32.Folder dir = shl.NameSpace(desktopFolder);
+            Shell32.FolderItem itm = dir.Items().Item(lnkName + ".lnk");
+            Shell32.ShellLinkObject lnk = (Shell32.ShellLinkObject)itm.GetLink;
+
+
+            lnk.Path = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            lnk.Arguments = "-nogui";
+            lnk.WorkingDirectory = System.IO.Path.GetDirectoryName(lnk.Path);
+            lnk.SetIconLocation(string.Format(@"{0}\FL64.exe", Config.current.flStudioPath), 0);
+
+            lnk.Save(lnkPath);
         }
     }
 }

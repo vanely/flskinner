@@ -47,6 +47,17 @@ namespace flskinner
 
             SkinsList.ItemsSource = Skin.skins;
             SkinsList.SelectedIndex = selectedIndex;
+
+            foreach (Skin s in Skin.skins.Where(x => x.fileName == Config.current.currentSkin))
+            {
+                currentSkin.Content = s.name;
+                break;
+            }
+
+            setMixerColors.IsChecked = Config.current.setMixerColors;
+            setGridColors.IsChecked = Config.current.setGridColors;
+            setDefaultPatternColor.IsChecked = Config.current.setDefaultPatternColor;
+            setPlaylistTrackColors.IsChecked = Config.current.setPlaylistTrackColors;
         }
 
         private void LaunchFL_Click(object sender, RoutedEventArgs e)
@@ -79,6 +90,30 @@ namespace flskinner
             var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var folderPath = string.Format(@"{0}\flskinner\", appDataPath);
             Process.Start("explorer.exe", folderPath);
+        }
+
+        private void setMixerColors_Click(object sender, RoutedEventArgs e)
+        {
+            Config.current.setMixerColors = ((CheckBox)sender).IsChecked.Value;
+            Config.current.Save();
+        }
+
+        private void setGridColorsFromSkin_Click(object sender, RoutedEventArgs e)
+        {
+            Config.current.setGridColors = ((CheckBox)sender).IsChecked.Value;
+            Config.current.Save();
+        }
+
+        private void setDefaultPatternColorFromSkin_Click(object sender, RoutedEventArgs e)
+        {
+            Config.current.setDefaultPatternColor = ((CheckBox)sender).IsChecked.Value;
+            Config.current.Save();
+        }
+
+        private void setPlaylistTrackColorsFromSkin_Click(object sender, RoutedEventArgs e)
+        {
+            Config.current.setPlaylistTrackColors = ((CheckBox)sender).IsChecked.Value;
+            Config.current.Save();
         }
     }
 }

@@ -8,6 +8,7 @@
 #include <codecvt>
 #include <filesystem>
 #include <regex>
+#include <intrin.h>
 namespace fs = std::filesystem;
 
 #include <shlobj.h>
@@ -36,6 +37,12 @@ fn_get_color_t orig_get_mixer_color;
 
 using fn_unk_set_color_t = uint64_t( * )( uint64_t, uint64_t, uint64_t, uint64_t );
 fn_unk_set_color_t orig_unk_set_color;
+
+using fn_get_registry_value_t = uint64_t( * )( uint64_t, uint64_t, const wchar_t*, uint32_t );
+fn_get_registry_value_t orig_get_registry_value;
+
+using fn_get_pl_track_color_t = uint64_t( * )( uint64_t );
+fn_get_pl_track_color_t orig_get_pl_track_color;
 
 std::wstring skin_path;
 
@@ -123,6 +130,7 @@ std::vector<dfm_t> dfms = {};
 
 bool
 replace_mixer_tracks = false,
+replace_grid_color = false,
 replace_buttons = false,
 replace_browser_color = false,
 replace_browser_files_color = false,
@@ -130,10 +138,12 @@ replace_sequencer_blocks = false,
 replace_sequencer_blocks_highlight = false,
 replace_sequencer_blocks_alt = false,
 replace_sequencer_blocks_alt_highlight = false,
-replace_default_pattern_color = false;
+replace_default_pattern_color = false,
+replace_default_playlist_track_color = false;
 
 uint32_t
 mixer_color = 0,
+grid_color = 0,
 button_colors = 0,
 browser_color = 0,
 browser_files_color = 0,
@@ -141,7 +151,8 @@ sequencer_blocks = 0,
 sequencer_blocks_highlight = 0,
 sequencer_blocks_alt = 0,
 sequencer_blocks_alt_highlight = 0,
-default_pattern_color = 0;
+default_pattern_color = 0,
+default_playlist_track_color = 0;
 
 void do_button_color_replacements( dfm::object& obj ) {
 	for ( auto& c : obj.get_children() ) {
@@ -247,11 +258,33 @@ vec_byte_t process_resource( void* memory, size_t size ) {
 uint64_t hk_get_mixer_color( uint32_t a1 ) {
 	auto res = orig_get_mixer_color( a1 );
 
-	if ( mixer_color ) {
+	if ( replace_mixer_tracks && mixer_color ) {
 		res = mixer_color;
 	}
 
 	return res;
+}
+
+// i put this hook here so that skins alone can override the grid color without a reg file
+uint64_t hk_get_registry_value( uint64_t a1, uint64_t a2, const wchar_t* name, uint32_t default_value ) {
+	// grid color
+	if ( replace_grid_color && wcscmp( name, L"Grid color" ) == 0 ) {
+		return grid_color;
+	}
+
+	return orig_get_registry_value( a1, a2, name, default_value );
+}
+
+void* get_pl_track_color_ret_address = 0;
+uint64_t hk_get_pl_track_color( uint64_t a1 ) {
+	const auto ret_addr = _ReturnAddress();
+	if ( replace_default_playlist_track_color
+		 && ret_addr == get_pl_track_color_ret_address
+		 && ( a1 & 0xFFFFFF ) == 0x565148 ) {
+		return ( a1 & 0xFF000000 ) | ( default_playlist_track_color & 0xFFFFFF );
+	}
+
+	return orig_get_pl_track_color( a1 );
 }
 
 // i think this is used for when different panels' colors are set in FL
@@ -296,6 +329,23 @@ HGLOBAL __stdcall hk_LoadResource(
 		MH_CreateHook( unk_set_color_addy, hk_unk_set_color, reinterpret_cast< void** >( &orig_unk_set_color ) );
 		MH_EnableHook( unk_set_color_addy );
 
+
+
+
+		const auto get_registry_value_addy = 
+			reinterpret_cast< void* >( pattern::find_rel( module_name.c_str(), "E8 ? ? ? ? 81 F8 ? ? ? ? 74 0C", 0, 1, 5 ) );
+
+		MH_CreateHook( get_registry_value_addy, hk_get_registry_value, reinterpret_cast< void** >( &orig_get_registry_value ) );
+		MH_EnableHook( get_registry_value_addy );
+
+		const auto get_pl_track_color_addy =
+			reinterpret_cast< void* >( pattern::find_rel( module_name.c_str(), "C7 C1 ? ? ? ? E8 ? ? ? ? 48 63 CE 48 8B D1", 6, 1, 5 ) );
+		get_pl_track_color_ret_address = 
+			reinterpret_cast< void* >( pattern::find_rel( module_name.c_str(), "E8 ? ? ? ? 40 B6 01 EB 0F", 0, 1, 5 ) + 0x50 );
+
+		MH_CreateHook( get_pl_track_color_addy, hk_get_pl_track_color, reinterpret_cast< void** >( &orig_get_pl_track_color ) );
+		MH_EnableHook( get_pl_track_color_addy );
+
 		if ( replace_browser_color ) {
 			// .text:0000000001EC9131 4C 8B 6F 58         mov     r13, [rdi+58h]
 			// .text:0000000001EC9135 8B 05 F9 83 3D 00   mov     eax, cs : dword_22A1534 // <-- the browser color
@@ -307,6 +357,8 @@ HGLOBAL __stdcall hk_LoadResource(
 
 			*browser_color_ptr = ( browser_color | 0xFF000000 );
 		}
+
+
 
 		if ( replace_browser_files_color ) {
 			auto browser_color_addy = pattern::find( module_name.c_str(), "44 8B 2D ? ? ? ? 41 81 E5 ? ? ? ?" );
@@ -332,13 +384,29 @@ HGLOBAL __stdcall hk_LoadResource(
 			*reinterpret_cast< uint32_t* >( sequencer_colors + 0xC ) = ( sequencer_blocks_alt_highlight | 0xFF000000 );
 
 		if ( replace_default_pattern_color ) {
-			const auto replacement1_addy = pattern::find( module_name.c_str(), "74 1E C7 C1 ? ? ? ?" ) + 36;
-			const auto replacement2_addy = pattern::find( module_name.c_str(), "74 09 81 78 ? ? ? ? ?" ) + 5;
+			auto replacement1_addy = pattern::find( module_name.c_str(), "74 1E C7 C1 ? ? ? ?" );
+			if ( replacement1_addy ) replacement1_addy += 36;
+
+			auto replacement2_addy = pattern::find( module_name.c_str(), "74 09 81 78 ? ? ? ? ?" );
+			if ( replacement2_addy ) replacement2_addy += 5;
+
 			const auto replacement3_addy = pattern::find_rel( module_name.c_str(), "48 8D 0D ? ? ? ? 48 63 DB" );
 
-			force_write( replacement1_addy, default_pattern_color );
-			force_write( replacement2_addy, default_pattern_color );
-			force_write( replacement3_addy, default_pattern_color );
+			if ( replacement1_addy ) force_write( replacement1_addy, default_pattern_color );
+			if ( replacement2_addy ) force_write( replacement2_addy, default_pattern_color );
+			if ( replacement3_addy ) force_write( replacement3_addy, default_pattern_color );
+
+			// (these replacements are for FL 20.5 and below)
+			{
+				auto replacement4_addy = pattern::find_rel( module_name.c_str(), "E8 ? ? ? ? C7 C6 ? ? ? ? 8B 5C 24 28", 0, 1, 5 );
+				if ( replacement4_addy ) replacement4_addy += 58;
+
+				auto replacement5_addy = pattern::find_rel( module_name.c_str(), "48 8D 05 ? ? ? ? 8B 55 24 " );
+				if ( replacement5_addy ) replacement5_addy += 8;
+
+				if ( replacement4_addy ) force_write( replacement4_addy, default_pattern_color );
+				if ( replacement5_addy ) force_write( replacement5_addy, default_pattern_color );
+			}
 
 			for ( auto occurence : pattern::find_all( module_name.c_str(), "81 78 08 48 51 56 00" ) ) {
 				force_write( occurence + 3, default_pattern_color );
@@ -551,7 +619,6 @@ void start() {
 
 		path += LR"(skins\)";
 		path += std::wstring( current_skin_file.begin(), current_skin_file.end() );
-
 	} catch ( std::exception& e ) {
 		std::stringstream err;
 		err << "An exception occured when loading the config file (flskinner.json in %appdata%/flskinner)";
@@ -561,6 +628,8 @@ void start() {
 		MessageBoxA( NULL, err.str().c_str(), "FLSkinner", MB_OK );
 		exit( 1 );
 	}
+
+	nlohmann::json main_config = j;
 
 	try {
 		const auto skin_buffer = read_file( path );
@@ -605,7 +674,8 @@ void start() {
 			}
 		};
 
-		setup_misc_val( "mixerColor", mixer_color, replace_mixer_tracks );
+		setup_misc_val( "mixerColor", mixer_color, replace_mixer_tracks, true );
+		setup_misc_val( "gridColor", grid_color, replace_grid_color, true );
 		setup_misc_val( "buttonColors", button_colors, replace_buttons, true );
 		setup_misc_val( "browserColor", browser_color, replace_browser_color, true );
 		setup_misc_val( "browserFilesColor", browser_files_color, replace_browser_files_color, true );
@@ -616,6 +686,20 @@ void start() {
 		setup_misc_val( "sequencerBlocksAltHighlight", sequencer_blocks_alt_highlight, replace_sequencer_blocks_alt_highlight, true );
 
 		setup_misc_val( "defaultPatternColor", default_pattern_color, replace_default_pattern_color, true );
+		setup_misc_val( "defaultPlaylistTrackColor", default_playlist_track_color, replace_default_playlist_track_color, true );
+
+		if ( main_config.contains( "setDefaultPatternColor" ) && !main_config[ "setDefaultPatternColor" ].get<bool>() )
+			replace_default_pattern_color = false;
+
+		if ( main_config.contains( "setGridColors" ) && !main_config[ "setGridColors" ].get<bool>() )
+			replace_grid_color = false;
+
+		if ( main_config.contains( "setMixerColors" ) && !main_config[ "setMixerColors" ].get<bool>() )
+			replace_mixer_tracks = false;
+
+		if ( main_config.contains( "setPlaylistTrackColors" ) && !main_config[ "setPlaylistTrackColors" ].get<bool>() )
+			replace_default_playlist_track_color = false;
+
 	} catch ( std::exception& e ) {
 		std::stringstream err;
 		err << "An exception occured when loading the skin file (" << current_skin_file << ")";

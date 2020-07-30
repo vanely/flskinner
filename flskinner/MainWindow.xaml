@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:flskinner"
         mc:Ignorable="d"
-        Title="flskinner" Height="460.503" Width="800" Icon="flskinner.ico"
+        Title="flskinner" Height="614.503" Width="800" Icon="flskinner.ico"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -14,16 +14,15 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}" FontSize="20" WindowStyle="ThreeDBorderWindow">
-    <Grid>
+    <Grid Margin="0,0,0,12">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="73*"/>
-            <ColumnDefinition Width="191*"/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Button x:Name="LaunchFL" Content="Launch FL Studio" Margin="10,0,10,10" Height="28" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Click="LaunchFL_Click"/>
-        <Button x:Name="OpenSkinsFolder" Content="Open skins folder" Margin="10,0,10,43" Height="28" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Click="OpenSkinsFolder_Click"/>
+        <Button x:Name="LaunchFL" Content="Launch FL Studio" Margin="10,434,10,0" Height="28" VerticalAlignment="Top" Click="LaunchFL_Click"/>
+        <Button x:Name="OpenSkinsFolder" Content="Open skins folder" Margin="11,401,9,0" Height="28" VerticalAlignment="Top" Click="OpenSkinsFolder_Click"/>
         <Label x:Name="SkinsLabel" Content="Skins" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.281,0.319" FontFamily="Roboto" FontWeight="Bold"/>
-        <ListBox x:Name="SkinsList" HorizontalAlignment="Left" Margin="10,49,0,179" Width="772" Grid.ColumnSpan="2" SelectionChanged="SkinsList_SelectionChanged">
+        <ListBox x:Name="SkinsList" Margin="10,49,10,0" SelectionChanged="SkinsList_SelectionChanged" Height="220" VerticalAlignment="Top">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
@@ -39,11 +38,18 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Label Content="FL Studio Path:" Margin="9,251,0,0" VerticalAlignment="Top" RenderTransformOrigin="-3.322,-0.499" FontWeight="Bold" HorizontalAlignment="Left" Width="106" FontSize="14"/>
-        <Label x:Name="flStudioPath" Content="" Margin="115,251,10,0" VerticalAlignment="Top" RenderTransformOrigin="-3.322,-0.499" Grid.ColumnSpan="2" FontSize="14"/>
-        <Button x:Name="OpenConfigFolder" Content="Open config Folder" Margin="10,0,10,76" Height="28" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Click="OpenConfigFolder_Click"/>
-        <Button x:Name="ChangeFLFolder_Copy" Content="Change FL Studio Path" Margin="10,0,10,109" Height="28" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Click="ChangeFLFolder_Click"/>
-        <Label x:Name="Version" Content="" Grid.Column="1" Margin="0,7,10,0" VerticalAlignment="Top" Width="94" HorizontalAlignment="Right" HorizontalContentAlignment="Right" />
+        <Label Content="FL Studio Path" Margin="10,303,0,0" RenderTransformOrigin="-3.322,-0.499" FontWeight="Bold" HorizontalAlignment="Left" Width="106" FontSize="14" Height="27" VerticalAlignment="Top"/>
+        <Label x:Name="flStudioPath" Content="" Margin="116,303,9,0" RenderTransformOrigin="-3.322,-0.499" FontSize="14" Height="27" VerticalAlignment="Top"/>
+        <Button x:Name="OpenConfigFolder" Content="Open config Folder" Margin="10,368,10,0" Height="28" VerticalAlignment="Top" Click="OpenConfigFolder_Click"/>
+        <Button x:Name="ChangeFLFolder_Copy" Content="Change FL Studio Path" Margin="10,335,10,0" Height="28" VerticalAlignment="Top" Click="ChangeFLFolder_Click"/>
+        <Label x:Name="Version" Content="" Margin="0,7,10,0" VerticalAlignment="Top" Width="94" HorizontalAlignment="Right" HorizontalContentAlignment="Right" />
+        <Label Content="Current Skin" Margin="10,274,0,0" RenderTransformOrigin="-3.322,-0.499" FontWeight="Bold" HorizontalAlignment="Left" Width="106" FontSize="14" MinWidth="7" Height="29" VerticalAlignment="Top"/>
+        <Label x:Name="currentSkin" Content="" Margin="116,274,9,0" RenderTransformOrigin="-3.322,-0.499" FontSize="14" MinWidth="7" Height="29" VerticalAlignment="Top"/>
+        <CheckBox x:Name="setGridColors" Content="Set grid colors from skin" HorizontalAlignment="Left" Margin="390,529,0,0" VerticalAlignment="Top" Width="334" Cursor="Hand" Click="setGridColorsFromSkin_Click" Height="29"/>
+        <CheckBox x:Name="setDefaultPatternColor" Content="Set default pattern color from skin" HorizontalAlignment="Left" Margin="10,497,0,0" VerticalAlignment="Top" Cursor="Hand" Click="setDefaultPatternColorFromSkin_Click" Height="32"/>
+        <CheckBox x:Name="setMixerColors" Content="Set mixer track colors" HorizontalAlignment="Left" Margin="390,497,0,0" VerticalAlignment="Top" Width="334" Cursor="Hand" Click="setMixerColors_Click" Height="32"/>
+        <Label Content="Optional settings" HorizontalAlignment="Left" Margin="10,462,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+        <CheckBox x:Name="setPlaylistTrackColors" Content="Set playlist track colors from skin" HorizontalAlignment="Left" Margin="10,529,0,0" VerticalAlignment="Top" Width="334" Cursor="Hand" Click="setPlaylistTrackColorsFromSkin_Click" Height="29"/>
 
     </Grid>
 </Window>

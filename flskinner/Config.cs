@@ -13,6 +13,10 @@ namespace flskinner
     {
         public string currentSkin { get; set; }
         public string flStudioPath { get; set; }
+        public bool setDefaultPatternColor { get; set; } = true;
+        public bool setGridColors { get; set; } = true;
+        public bool setMixerColors { get; set; } = true;
+        public bool setPlaylistTrackColors { get; set; } = true;
 
         public static Config current;
 

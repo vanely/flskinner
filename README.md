@@ -7,9 +7,11 @@
 
 ### What versions does this support?
 
-This should support any FL studio version that is 12.5 and above.
-FL 12.5 may have issues with the default skin that ships with this.
-It only works on Windows and with the 64-bit version of FL studio.
+This was developed for FL 20.7.\*, but it should work fine on earlier versions. FL 12.5 is not very well supported.
+
+Windows/64-bit only.
+
+Mac support is unlikely to come in the future due to this project's complexity and reliance on the Windows API.
 
 ### Media
 

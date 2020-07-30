@@ -25,16 +25,13 @@
     "#353E43": "#202020",
     "#1e2b31": "#171F22",
     "#716C63": "#292929",
-    "#2a3a44": "#131313",
-    "#10202a": "#000000",
-    "#283842": "#000000",
     "#f80512": "#202020",
-    "#495257": "#FF0000",
     "#4B5459": "#171717",
     "#495257": "#171717",
     "#4A5358": "#171717"
   },
   "mixerColor": "#0F0F0F",
+  "gridColor": "#181818",
   "buttonColors": "#0F0F0F",
   "browserColor": "#303030",
   "browserFilesColor": "#101010",
@@ -43,6 +40,7 @@
   "sequencerBlocksAlt": "#E1B0DF",
   "sequencerBlocksAltHighlight": "#F25EED",
   "defaultPatternColor": "#242424",
+  "defaultPlaylistTrackColor": "#242424",
   "dfm2": {
     "*": [
       {

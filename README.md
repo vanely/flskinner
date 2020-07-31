@@ -13,6 +13,8 @@ Windows/64-bit only.
 
 Mac support is unlikely to come in the future due to this project's complexity and reliance on the Windows API.
 
+### [Discord](https://discord.gg/QtVBJMe)
+
 ### Media
 
 ![](https://i.imgur.com/72dc4bZ.png)
@@ -62,5 +64,3 @@ Feel free to make your own skins, they are simply JSON files with color replacem
 ### More info
 
 This was just a fun little project. This isn't intended to be some super serious tool. Image-Line has already said that there will be user-customization in a 20.x update.
-
-[Discord](https://discord.gg/QtVBJMe)

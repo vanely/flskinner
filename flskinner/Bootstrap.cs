@@ -104,9 +104,9 @@ namespace flskinner
                     StringBuilder sb = new StringBuilder();
                     sb.Append("An exception occured while loading the skin file ");
                     sb.AppendLine("'" + Path.GetFileName(skinPath) + "'");
+                    sb.AppendLine("File is located under '" + Path.GetDirectoryName(skinPath) + "'");
                     sb.Append(e.Message);
                     MessageBox.Show(sb.ToString());
-                    System.Environment.Exit(1);
                 }
             }
         }

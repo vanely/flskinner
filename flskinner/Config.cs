@@ -17,6 +17,7 @@ namespace flskinner
         public bool setGridColors { get; set; } = true;
         public bool setMixerColors { get; set; } = true;
         public bool setPlaylistTrackColors { get; set; } = true;
+        public bool hideName { get; set; } = false;
 
         public static Config current;
 

@@ -141,6 +141,8 @@ replace_sequencer_blocks_alt_highlight = false,
 replace_default_pattern_color = false,
 replace_default_playlist_track_color = false;
 
+bool hide_name = false;
+
 uint32_t
 mixer_color = 0,
 grid_color = 0,
@@ -287,6 +289,8 @@ uint64_t hk_get_pl_track_color( uint64_t a1 ) {
 	return orig_get_pl_track_color( a1 );
 }
 
+#include <random>
+
 // i think this is used for when different panels' colors are set in FL
 // it also might have more args :shrug:
 uint64_t hk_unk_set_color( uint64_t a, uint64_t b, uint64_t col, uint64_t d ) {
@@ -411,6 +415,11 @@ HGLOBAL __stdcall hk_LoadResource(
 			for ( auto occurence : pattern::find_all( module_name.c_str(), "81 78 08 48 51 56 00" ) ) {
 				force_write( occurence + 3, default_pattern_color );
 			}
+		}
+
+		if ( hide_name ) {
+			const auto name_str_addy = pattern::find_rel( module_name.c_str(), "4D 33 C9 E8 ? ? ? ? 48 8B 85 ? ? ? ? 48 89 45 30", 42 );
+			force_write<uint8_t>( name_str_addy, 0 );
 		}
 
 		resources_loaded = true;
@@ -699,6 +708,9 @@ void start() {
 
 		if ( main_config.contains( "setPlaylistTrackColors" ) && !main_config[ "setPlaylistTrackColors" ].get<bool>() )
 			replace_default_playlist_track_color = false;
+
+		if ( main_config.contains( "hideName" ) && main_config[ "hideName" ].get<bool>() )
+			hide_name = true;
 
 	} catch ( std::exception& e ) {
 		std::stringstream err;

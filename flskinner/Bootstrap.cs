@@ -115,21 +115,22 @@ namespace flskinner
         {
             CommonOpenFileDialog dialog = new CommonOpenFileDialog();
             dialog.InitialDirectory = "C:\\";
-            dialog.IsFolderPicker = true;
-            dialog.Title = "Please select your FL studio folder (contains FL64.exe)";
+            dialog.IsFolderPicker = false;
+            dialog.Filters.Add(new CommonFileDialogFilter(@"FL64.exe", "*.exe"));
+            dialog.Title = "Please select your FL64.exe";
 
             var res = dialog.ShowDialog();
             if (res == CommonFileDialogResult.Ok)
             {
-                var path = dialog.FileName + @"\FL64.exe";
-                if (File.Exists(path))
+                var path = dialog.FileName;
+                if (Path.GetFileName(dialog.FileName) == "FL64.exe")
                 {
-                    Config.current.flStudioPath = dialog.FileName;
+                    Config.current.flStudioPath = Path.GetDirectoryName(dialog.FileName);
                     Config.current.Save();
                 }
                 else
                 {
-                    MessageBox.Show("That folder does not contain FL studio!");
+                    MessageBox.Show("That is not FL64.exe!");
 
                     PickFLFolder();
                     return;

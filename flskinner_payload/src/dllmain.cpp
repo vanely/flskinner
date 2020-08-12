@@ -139,7 +139,8 @@ replace_sequencer_blocks_highlight = false,
 replace_sequencer_blocks_alt = false,
 replace_sequencer_blocks_alt_highlight = false,
 replace_default_pattern_color = false,
-replace_default_playlist_track_color = false;
+replace_default_playlist_track_color = false,
+replace_mixer_level_gradient = false;
 
 bool hide_name = false;
 
@@ -154,7 +155,14 @@ sequencer_blocks_highlight = 0,
 sequencer_blocks_alt = 0,
 sequencer_blocks_alt_highlight = 0,
 default_pattern_color = 0,
-default_playlist_track_color = 0;
+default_playlist_track_color = 0,
+mixer_level_gradient1_a,
+mixer_level_gradient1_b,
+mixer_level_gradient2_a,
+mixer_level_gradient2_b,
+mixer_level_gradient3_a,
+mixer_level_gradient3_b,
+mixer_level_clipping;
 
 void do_button_color_replacements( dfm::object& obj ) {
 	for ( auto& c : obj.get_children() ) {
@@ -414,6 +422,53 @@ HGLOBAL __stdcall hk_LoadResource(
 
 			for ( auto occurence : pattern::find_all( module_name.c_str(), "81 78 08 48 51 56 00" ) ) {
 				force_write( occurence + 3, default_pattern_color );
+			}
+		}
+
+		// 48 8B 4D 60 C7 C2 ? ? ? ? 41 C7 C0 ? ? ? ? F3 0F 10 1D ? ? ? ? 48 0F B6 05 ? ? ? ? 88 44 24 20 C7 44 24 ? ? ? ? ? E8 ? ? ? ? 48 8B 4D 78 48 33 D2 48 8B 45 78 48 8B 30 FF 96 ? ? ? ? 48 8B 4D 60 48 8D 95 ? ? ? ? 41 C7 C0 ? ? ? ? E8 ? ? ? ? E9 ? ? ? ?
+
+		if ( replace_mixer_level_gradient ) {
+			auto replacement_addy1 = pattern::find( module_name.c_str(), "48 8B 4D 60 C7 C2 ? ? ? ? 41 C7 C0 ? ? ? ? F3 0F 10 1D ? ? ? ? 48 0F B6 05 ? ? ? ? 88 44 24 20 C7 44 24 ? ? ? ? ? E8 ? ? ? ? 48 8B 4D 78 48 33 D2 48 8B 45 78 48 8B 30 FF 96 ? ? ? ? 48 8B 4D 60 48 8D 95 ? ? ? ? 41 C7 C0 ? ? ? ? E8 ? ? ? ? 48 8D BD ? ? ? ?" );
+
+			if ( replacement_addy1 ) {
+				replacement_addy1 += 6;
+
+				force_write( replacement_addy1, mixer_level_gradient1_a | 0xFF000000 );
+
+				replacement_addy1 += 7;
+
+				force_write( replacement_addy1, mixer_level_gradient1_b | 0xFF000000 );
+			}
+
+			auto replacement_addy2 = pattern::find( module_name.c_str(), "48 8B 4D 60 C7 C2 ? ? ? ? 41 C7 C0 ? ? ? ? F3 0F 10 1D ? ? ? ? 48 0F B6 05 ? ? ? ? 88 44 24 20 C7 44 24 ? ? ? ? ? E8 ? ? ? ? 48 8B 4D 78 48 33 D2 48 8B 45 78 48 8B 30 FF 96 ? ? ? ? 48 8B 4D 60 48 8D 95 ? ? ? ? 41 C7 C0 ? ? ? ? E8 ? ? ? ? E9 ? ? ? ?" );
+			
+			if ( replacement_addy2 ) {
+				replacement_addy2 += 6;
+
+				force_write( replacement_addy2, mixer_level_gradient2_a | 0xFF000000 );
+
+				replacement_addy2 += 7;
+			
+				force_write( replacement_addy2, mixer_level_gradient2_b | 0xFF000000 );
+			}
+
+			auto replacement_addy3 = pattern::find( module_name.c_str(), "48 8B 4D 60 C7 C2 ? ? ? ? 41 C7 C0 ? ? ? ? F3 0F 10 1D ? ? ? ? 48 0F B6 05 ? ? ? ? 88 44 24 20 C7 44 24 ? ? ? ? ? E8 ? ? ? ? 48 8B 4D 78 48 33 D2 48 8B 45 78 48 8B 30 FF 96 ? ? ? ? 48 8B 4D 60 48 8D 95 ? ? ? ? 41 C7 C0 ? ? ? ? E8 ? ? ? ? 48 8B 4D 78");
+
+			if ( replacement_addy3 ) {
+				replacement_addy3 += 6;
+
+				force_write( replacement_addy3, mixer_level_gradient3_a | 0xFF000000 );
+				replacement_addy3 += 7;
+				force_write( replacement_addy3, mixer_level_gradient3_b | 0xFF000000 );
+
+			}
+
+			auto clipping_addy = pattern::find( module_name.c_str(), "48 8B 4D 78 C7 C2 ? ? ? ? 48 8B 45 78 48 8B 30 FF 96 ? ? ? ? 48 8B 4D 78" );
+
+			if ( clipping_addy ) {
+				clipping_addy += 6;
+
+				force_write( clipping_addy, mixer_level_clipping | 0xFF000000 );
 			}
 		}
 
@@ -696,6 +751,14 @@ void start() {
 
 		setup_misc_val( "defaultPatternColor", default_pattern_color, replace_default_pattern_color, true );
 		setup_misc_val( "defaultPlaylistTrackColor", default_playlist_track_color, replace_default_playlist_track_color, true );
+
+		setup_misc_val( "mixerLevelGradient1A", mixer_level_gradient1_a, replace_mixer_level_gradient, true );
+		setup_misc_val( "mixerLevelGradient1B", mixer_level_gradient1_b, replace_mixer_level_gradient, true );
+		setup_misc_val( "mixerLevelGradient2A", mixer_level_gradient2_a, replace_mixer_level_gradient, true );
+		setup_misc_val( "mixerLevelGradient2B", mixer_level_gradient2_b, replace_mixer_level_gradient, true );
+		setup_misc_val( "mixerLevelGradient3A", mixer_level_gradient3_a, replace_mixer_level_gradient, true );
+		setup_misc_val( "mixerLevelGradient3B", mixer_level_gradient3_b, replace_mixer_level_gradient, true );
+		setup_misc_val( "mixerLevelClipping", mixer_level_clipping, replace_mixer_level_gradient, true );
 
 		if ( main_config.contains( "setDefaultPatternColor" ) && !main_config[ "setDefaultPatternColor" ].get<bool>() )
 			replace_default_pattern_color = false;

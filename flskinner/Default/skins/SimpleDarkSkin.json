@@ -41,6 +41,12 @@
   "sequencerBlocksAltHighlight": "#F25EED",
   "defaultPatternColor": "#242424",
   "defaultPlaylistTrackColor": "#242424",
+  "mixerLevelGradient1B": "#EEBBE4",
+  "mixerLevelGradient2A": "#EEBBE4",
+  "mixerLevelGradient2B": "#EC7498",
+  "mixerLevelGradient3A": "#EEBBE4",
+  "mixerLevelGradient3B": "#EC7498",
+  "mixerLevelClipping": "#F0530F",
   "dfm2": {
     "*": [
       {

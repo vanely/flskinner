@@ -140,7 +140,8 @@ replace_sequencer_blocks_alt = false,
 replace_sequencer_blocks_alt_highlight = false,
 replace_default_pattern_color = false,
 replace_default_playlist_track_color = false,
-replace_mixer_level_gradient = false;
+replace_mixer_level_gradient = false,
+replace_peak_meter = false;
 
 bool hide_name = false;
 
@@ -162,7 +163,10 @@ mixer_level_gradient2_a,
 mixer_level_gradient2_b,
 mixer_level_gradient3_a,
 mixer_level_gradient3_b,
-mixer_level_clipping;
+mixer_level_clipping,
+peak_meter_a,
+peak_meter_b,
+peak_meter_c;
 
 void do_button_color_replacements( dfm::object& obj ) {
 	for ( auto& c : obj.get_children() ) {
@@ -472,6 +476,19 @@ HGLOBAL __stdcall hk_LoadResource(
 			}
 		}
 
+		if ( replace_peak_meter ) {
+			auto replacement_addy = pattern::find( module_name.c_str(), "41 C7 C1 E0 E8 EC 00" );
+
+			if ( replacement_addy ) {
+				replacement_addy += 3;
+				force_write( replacement_addy, peak_meter_a & ~0xFF000000 );
+				replacement_addy += 8;
+				force_write( replacement_addy, peak_meter_b & ~0xFF000000 );
+				replacement_addy += 8;
+				force_write( replacement_addy, peak_meter_c & ~0xFF000000 );
+			}
+		}
+
 		if ( hide_name ) {
 			const auto name_str_addy = pattern::find_rel( module_name.c_str(), "4D 33 C9 E8 ? ? ? ? 48 8B 85 ? ? ? ? 48 89 45 30", 42 );
 			force_write<uint8_t>( name_str_addy, 0 );
@@ -759,6 +776,12 @@ void start() {
 		setup_misc_val( "mixerLevelGradient3A", mixer_level_gradient3_a, replace_mixer_level_gradient, true );
 		setup_misc_val( "mixerLevelGradient3B", mixer_level_gradient3_b, replace_mixer_level_gradient, true );
 		setup_misc_val( "mixerLevelClipping", mixer_level_clipping, replace_mixer_level_gradient, true );
+
+
+		setup_misc_val( "peakMeterGradientA", peak_meter_a, replace_peak_meter, true );
+		setup_misc_val( "peakMeterGradientB", peak_meter_b, replace_peak_meter, true );
+		setup_misc_val( "peakMeterGradientC", peak_meter_c, replace_peak_meter, true );
+		
 
 		if ( main_config.contains( "setDefaultPatternColor" ) && !main_config[ "setDefaultPatternColor" ].get<bool>() )
 			replace_default_pattern_color = false;

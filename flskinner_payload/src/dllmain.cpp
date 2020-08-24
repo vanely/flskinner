@@ -142,6 +142,7 @@ replace_sequencer_blocks_alt_highlight = false,
 replace_default_pattern_color = false,
 replace_default_playlist_track_color = false,
 replace_mixer_level_gradient = false,
+replace_mixer_level_background_gradient = false,
 replace_peak_meter = false;
 
 bool hide_name = false;
@@ -165,6 +166,8 @@ mixer_level_gradient2_b,
 mixer_level_gradient3_a,
 mixer_level_gradient3_b,
 mixer_level_clipping,
+mixer_level_background_gradient_a,
+mixer_level_background_gradient_b,
 peak_meter_a,
 peak_meter_b,
 peak_meter_c;
@@ -474,6 +477,17 @@ HGLOBAL __stdcall hk_LoadResource(
 				clipping_addy += 6;
 
 				force_write( clipping_addy, mixer_level_clipping | 0xFF000000 );
+			}
+		}
+
+		if (replace_mixer_level_background_gradient) {
+			auto replacement_addy = pattern::find(module_name.c_str(), "48 8B 4D 60 C7 C2 ? ? ? ? 41 C7 C0 ? ? ? ? F3 0F 10 1D ? ? ? ?");
+
+			if (replacement_addy) {
+				replacement_addy += 6;
+				force_write(replacement_addy, mixer_level_background_gradient_b | 0xFF000000);
+				replacement_addy += 7;
+				force_write(replacement_addy, mixer_level_background_gradient_a | 0xFF000000);
 			}
 		}
 
@@ -790,6 +804,8 @@ void start() {
 		setup_misc_val( "mixerLevelGradient3B", mixer_level_gradient3_b, replace_mixer_level_gradient, true );
 		setup_misc_val( "mixerLevelClipping", mixer_level_clipping, replace_mixer_level_gradient, true );
 
+		setup_misc_val("mixerLevelBackgroundGradientA", mixer_level_background_gradient_a, replace_mixer_level_background_gradient, true);
+		setup_misc_val("mixerLevelBackgroundGradientB", mixer_level_background_gradient_b, replace_mixer_level_background_gradient, true);
 
 		setup_misc_val( "peakMeterGradientA", peak_meter_a, replace_peak_meter, true );
 		setup_misc_val( "peakMeterGradientB", peak_meter_b, replace_peak_meter, true );

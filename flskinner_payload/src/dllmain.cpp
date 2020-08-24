@@ -650,6 +650,9 @@ dfm_t parse_dfm( std::string key, nlohmann::json val ) {
 	} else if ( type == "constant" ) {
 		v.m_type = dfm::type_t::constant;
 		v.m_str_val = val[ "value" ].get<std::string>();
+	} else if ( type == "int32" ) {
+		v.m_type = dfm::type_t::int32;
+		v.m_num_val = val[ "value" ].get<int>();
 	} else if ( type == "float" ) {
 		v.m_type = dfm::type_t::long_double;
 		

@@ -16,6 +16,7 @@ namespace fs = std::filesystem;
 #include "patterns.hpp"
 #include "dfm.hpp"
 #include "json.hpp"
+#include "flt80.h"
 
 std::string module_name = "FLEngine_x64.dll";
 
@@ -646,6 +647,18 @@ dfm_t parse_dfm( std::string key, nlohmann::json val ) {
 	} else if ( type == "string" ) {
 		v.m_type = dfm::type_t::string;
 		v.m_str_val = val[ "value" ].get<std::string>();
+	} else if ( type == "constant" ) {
+		v.m_type = dfm::type_t::constant;
+		v.m_str_val = val[ "value" ].get<std::string>();
+	} else if ( type == "float" ) {
+		v.m_type = dfm::type_t::long_double;
+		
+		auto val64 = val[ "value" ].get<double>();
+		flt80 val80;
+
+		_cvt64to80( &val64, &val80 );
+
+		v.m_extended_val = val80;
 	} else {
 		throw std::exception( "Unsupported DFM value type!" );
 	}

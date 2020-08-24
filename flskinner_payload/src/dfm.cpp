@@ -55,7 +55,7 @@ void dfm::val::to_binary( buffer_t & buf ) {
 		break;
 	}
 	case type_t::long_double: {
-		buf.write<long_double_t>( m_extended_val );
+		buf.write<flt80>( m_extended_val );
 		break;
 	}
 	case type_t::string: {
@@ -259,7 +259,7 @@ dfm::object dfm::parse( vec_byte_t file_buffer ) {
 			break;
 		}
 		case 0x05: { // long double (10 bytes)
-			auto value = buf.read<dfm::long_double_t>();
+			auto value = buf.read<flt80>();
 
 			val.m_type = dfm::type_t::long_double;
 			val.m_extended_val = value;

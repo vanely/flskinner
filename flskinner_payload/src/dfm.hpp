@@ -7,13 +7,9 @@
 #include <vector>
 
 #include "buf.h"
+#include "flt80.h"
 
 namespace dfm {
-	struct long_double_t {
-		// not implementing this right now
-		char bytes[ 10 ];
-	};
-
 	enum class obj_type_t : uint8_t {
 		normal = 0,
 		inherited = 0xF1,
@@ -50,7 +46,7 @@ namespace dfm {
 		// ?????????????????????????????
 		// why tf is delphi storing small numbers (like font sizes) with 80 bit floats????
 		// msvc doesnt even support long doubles LOL
-		long_double_t m_extended_val;
+		flt80 m_extended_val;
 
 		std::string m_str_val;
 		std::vector<std::string> m_str_arr;

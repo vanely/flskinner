@@ -27,6 +27,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="src\flt80.masm" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\buf.h">
@@ -39,6 +40,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\json.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\flt80.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
